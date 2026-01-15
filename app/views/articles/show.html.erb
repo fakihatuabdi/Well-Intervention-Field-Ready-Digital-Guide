@@ -1,0 +1,70 @@
+<div class="fade-in w-full max-w-4xl mx-auto">
+  <!-- Breadcrumb -->
+  <div class="mb-6">
+    <%= link_to handbook_path, class: "text-sky-600 hover:text-sky-800 inline-flex items-center gap-2 transition-all duration-300" do %>
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+      </svg>
+      Back to Handbook
+    <% end %>
+  </div>
+
+  <!-- Article Header -->
+  <div class="bg-white rounded-2xl shadow-lg p-8 mb-6">
+    <h1 class="text-4xl font-bold text-slate-800 mb-3"><%= @article.title %></h1>
+    
+    <div class="flex flex-wrap items-center gap-3">
+      <span class="px-3 py-1 bg-gradient-to-r from-sky-100 to-cyan-100 text-sky-700 rounded-full text-sm font-medium">
+        <%= @article.category.gsub('_', ' ').titleize %>
+      </span>
+      
+      <span class="flex items-center gap-1 text-sm text-slate-600">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+        </svg>
+        <span id="view-count-<%= @article.id %>"><%= @article.view_count %></span> views
+      </span>
+    </div>
+  </div>
+
+  <!-- Article Content -->
+  <div class="bg-white rounded-2xl shadow-lg p-8">
+    <div class="prose prose-slate max-w-none">
+      <% if @article.content.present? %>
+        <%= simple_format(@article.content) %>
+      <% else %>
+        <div class="text-center py-12 bg-slate-50 rounded-xl">
+          <p class="text-slate-400 text-lg">Content will be added soon</p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const articleId = <%= @article.id %>;
+    
+    // Wait for firebaseViewCounter to be initialized
+    if (typeof firebaseViewCounter !== 'undefined') {
+      // Increment view when page loads
+      firebaseViewCounter.incrementArticleView(articleId);
+      
+      // Watch for real-time updates (only if Firebase is configured)
+      if (firebaseViewCounter.isInitialized) {
+        firebaseViewCounter.watchArticleViews(articleId, (count) => {
+          const element = document.getElementById('view-count-<%= @article.id %>');
+          if (element) {
+            element.textContent = count;
+          }
+        });
+        
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+          firebaseViewCounter.unwatchArticleViews(articleId);
+        });
+      }
+    }
+  });
+</script>

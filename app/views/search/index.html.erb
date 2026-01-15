@@ -1,0 +1,178 @@
+<div class="fade-in w-full max-w-4xl mx-auto">
+  <div class="mb-8">
+    <h1 class="text-4xl font-bold text-slate-800 mb-2">Search Articles</h1>
+    <p class="text-slate-600">Find articles, topics, and content across the handbook</p>
+  </div>
+
+  <!-- Search Form -->
+  <div class="mb-8 relative">
+    <%= form_with url: search_path, method: :get, class: "relative", id: "search-form" do |f| %>
+      <div class="flex gap-2">
+        <%= f.text_field :query, 
+            value: @query,
+            placeholder: "Type to search articles, keywords, topics...",
+            class: "flex-1 px-4 py-4 rounded-xl border-2 border-slate-200 focus:border-sky-500 focus:ring-2 focus:ring-sky-200 outline-none transition-all duration-300",
+            autofocus: true,
+            autocomplete: "off",
+            id: "search-input" %>
+        <%= f.submit "Search", class: "px-8 py-4 bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-600 hover:to-cyan-600 text-white font-semibold rounded-xl transition-all duration-300 cursor-pointer shadow-lg hover:shadow-xl" %>
+      </div>
+      
+      <!-- Live Search Suggestions Dropdown -->
+      <div id="suggestions-dropdown" class="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-2xl border border-sky-200 max-h-96 overflow-y-auto z-50 hidden">
+        <div id="suggestions-list" class="py-2">
+          <!-- Suggestions will be populated by JavaScript -->
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Search Results -->
+  <% if @query.present? %>
+    <div class="mb-4 text-slate-600">
+      <% if @articles.any? %>
+        Found <%= @articles.total_count %> result(s) for "<span class="font-semibold text-slate-800"><%= @query %></span>"
+      <% else %>
+        No results found for "<span class="font-semibold text-slate-800"><%= @query %></span>"
+      <% end %>
+    </div>
+
+    <div class="space-y-4">
+      <% @articles.each do |article| %>
+        <%= link_to article_path(article), class: "block" do %>
+          <div class="bg-white rounded-xl shadow-md p-6 hover-lift border border-slate-100 transition-all duration-300">
+            <div class="flex items-start justify-between gap-4 mb-2">
+              <h3 class="text-xl font-bold text-slate-800"><%= article.title %></h3>
+              <span class="px-3 py-1 bg-gradient-to-r from-sky-100 to-cyan-100 text-sky-700 rounded-full text-xs font-medium whitespace-nowrap">
+                <%= article.category.gsub('_', ' ').titleize %>
+              </span>
+            </div>
+            
+            <% if article.subcategory.present? %>
+              <p class="text-sm text-slate-500 mb-3">
+                <%= article.subcategory.gsub('_', ' ').titleize %>
+              </p>
+            <% end %>
+            
+            <p class="text-slate-600 mb-3">
+              <%= truncate(article.content, length: 200) %>
+            </p>
+            
+            <div class="flex items-center gap-4 text-sm text-slate-500">
+              <span class="flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                </svg>
+                <%= article.view_count %> views
+              </span>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+
+    <!-- Pagination -->
+    <% if @articles.total_pages > 1 %>
+      <div class="mt-8 flex justify-center">
+        <%= paginate @articles, theme: 'twitter-bootstrap-4' %>
+      </div>
+    <% end %>
+  <% else %>
+    <!-- Empty State -->
+    <div class="text-center py-16 bg-slate-50 rounded-2xl">
+      <svg class="w-20 h-20 mx-auto text-slate-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+      </svg>
+      <h3 class="text-xl font-semibold text-slate-600 mb-2">Start Searching</h3>
+      <p class="text-slate-500">Enter keywords to search across all articles and content</p>
+    </div>
+  <% end %>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('search-input');
+    const suggestionsDropdown = document.getElementById('suggestions-dropdown');
+    const suggestionsList = document.getElementById('suggestions-list');
+    let debounceTimer;
+    
+    // All articles data for suggestions
+    const allArticles = <%= raw Article.published.map { |a| { id: a.id, title: a.title, category: a.category, subcategory: a.subcategory } }.to_json %>;
+    
+    searchInput.addEventListener('input', function() {
+      const query = this.value.trim().toLowerCase();
+      
+      clearTimeout(debounceTimer);
+      
+      if (query.length < 2) {
+        suggestionsDropdown.classList.add('hidden');
+        return;
+      }
+      
+      debounceTimer = setTimeout(() => {
+        const matches = allArticles.filter(article => 
+          article.title.toLowerCase().includes(query) ||
+          article.category.toLowerCase().includes(query) ||
+          (article.subcategory && article.subcategory.toLowerCase().includes(query))
+        ).slice(0, 8);
+        
+        if (matches.length > 0) {
+          suggestionsList.innerHTML = matches.map(article => `
+            <a href="/articles/${article.id}" 
+               class="block px-4 py-3 hover:bg-gradient-to-r hover:from-sky-50 hover:to-cyan-50 transition-all duration-200 border-b border-slate-100 last:border-b-0">
+              <div class="flex items-start justify-between gap-2">
+                <div class="flex-1">
+                  <p class="font-semibold text-slate-800 text-sm mb-1">${highlightMatch(article.title, query)}</p>
+                  <p class="text-xs text-slate-500">${article.category.replace(/_/g, ' ')}</p>
+                </div>
+                <svg class="w-4 h-4 text-sky-500 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+              </div>
+            </a>
+          `).join('');
+          suggestionsDropdown.classList.remove('hidden');
+        } else {
+          suggestionsList.innerHTML = `
+            <div class="px-4 py-6 text-center text-slate-500 text-sm">
+              <svg class="w-12 h-12 mx-auto text-slate-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M12 12h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              No suggestions found for "${query}"
+            </div>
+          `;
+          suggestionsDropdown.classList.remove('hidden');
+        }
+      }, 300);
+    });
+    
+    // Highlight matching text
+    function highlightMatch(text, query) {
+      const regex = new RegExp(`(${query})`, 'gi');
+      return text.replace(regex, '<span class="bg-sky-200 text-sky-900 font-bold">$1</span>');
+    }
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+      if (!searchInput.contains(e.target) && !suggestionsDropdown.contains(e.target)) {
+        suggestionsDropdown.classList.add('hidden');
+      }
+    });
+    
+    // Show dropdown again on focus if there's text
+    searchInput.addEventListener('focus', function() {
+      if (this.value.trim().length >= 2) {
+        const event = new Event('input');
+        this.dispatchEvent(event);
+      }
+    });
+    
+    // Close dropdown on escape key
+    searchInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        suggestionsDropdown.classList.add('hidden');
+      }
+    });
+  });
+</script>
