@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: wi-field-guide
+    name: Well-Intervention-Field-Ready-Digital-Guide
     runtime: ruby
     plan: free
     buildCommand: "./bin/render-build.sh"
