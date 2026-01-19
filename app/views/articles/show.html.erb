@@ -46,25 +46,45 @@
   document.addEventListener('DOMContentLoaded', function() {
     const articleId = <%= @article.id %>;
     
-    // Wait for firebaseViewCounter to be initialized
-    if (typeof firebaseViewCounter !== 'undefined') {
-      // Increment view when page loads
-      firebaseViewCounter.incrementArticleView(articleId);
-      
-      // Watch for real-time updates (only if Firebase is configured)
-      if (firebaseViewCounter.isInitialized) {
-        firebaseViewCounter.watchArticleViews(articleId, (count) => {
+    // Wait a bit for firebaseViewCounter to be initialized
+    setTimeout(() => {
+      if (typeof firebaseViewCounter !== 'undefined') {
+        // Increment view when page loads
+        firebaseViewCounter.incrementArticleView(articleId);
+        
+        // Watch for real-time updates (only if Firebase is configured)
+        if (firebaseViewCounter.isInitialized) {
+          firebaseViewCounter.watchArticleViews(articleId, (count) => {
+            const element = document.getElementById('view-count-<%= @article.id %>');
+            if (element && parseInt(element.textContent) !== count) {
+              // Use animated count update
+              firebaseViewCounter.animateCount(element, count);
+            }
+          });
+          
+          // Cleanup on page unload
+          window.addEventListener('beforeunload', () => {
+            firebaseViewCounter.unwatchArticleViews(articleId);
+          });
+        }
+      } else {
+        // Fallback: increment via Rails if Firebase not loaded
+        fetch(`/articles/${articleId}/increment_view`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': document.querySelector('[name="csrf-token"]').content
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
           const element = document.getElementById('view-count-<%= @article.id %>');
           if (element) {
-            element.textContent = count;
+            element.textContent = data.view_count;
           }
-        });
-        
-        // Cleanup on page unload
-        window.addEventListener('beforeunload', () => {
-          firebaseViewCounter.unwatchArticleViews(articleId);
-        });
+        })
+        .catch(error => console.error('Error updating view count:', error));
       }
-    }
+    }, 100);
   });
 </script>

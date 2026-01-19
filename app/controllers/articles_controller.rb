@@ -2,7 +2,8 @@ class ArticlesController < ApplicationController
   before_action :set_article, only: [:show, :increment_view, :bookmark]
 
   def show
-    @article.increment_view_count
+    # Don't increment here - let JavaScript handle it for better control
+    # This prevents double counting when page is refreshed
   end
 
   def increment_view
