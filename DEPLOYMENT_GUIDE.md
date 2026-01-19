@@ -1,0 +1,110 @@
+# Panduan Deploy ke Render.com
+
+Aplikasi Well Intervention Field-Ready Digital Guide sudah siap untuk di-deploy ke Render.com.
+
+## Langkah-langkah Deploy:
+
+### 1. Persiapan Repository
+Push semua perubahan ke GitHub repository Anda:
+```bash
+git add .
+git commit -m "Prepare for Render deployment"
+git push origin main
+```
+
+### 2. Deploy ke Render.com
+
+1. **Buat Akun Render**
+   - Kunjungi https://render.com
+   - Sign up atau login menggunakan akun GitHub Anda
+
+2. **Connect Repository**
+   - Klik tombol "New +" di dashboard
+   - Pilih "Web Service"
+   - Connect repository GitHub Anda
+   - Pilih repository aplikasi ini
+
+3. **Konfigurasi Deploy**
+   Render akan otomatis mendeteksi file `render.yaml`, atau Anda bisa setup manual:
+   
+   - **Name**: `wi-field-guide` (atau nama yang Anda inginkan)
+   - **Region**: Singapore (paling dekat dengan Indonesia)
+   - **Branch**: `main`
+   - **Runtime**: Ruby
+   - **Build Command**: `./bin/render-build.sh`
+   - **Start Command**: `bundle exec puma -C config/puma.rb`
+   - **Plan**: Free
+
+4. **Environment Variables**
+   Tambahkan environment variables berikut:
+   - `RAILS_ENV`: `production`
+   - `SECRET_KEY_BASE`: (akan di-generate otomatis atau gunakan: `rails secret`)
+   - `RAILS_LOG_TO_STDOUT`: `true`
+   - `RAILS_SERVE_STATIC_FILES`: `true`
+
+5. **Deploy**
+   - Klik "Create Web Service"
+   - Render akan otomatis build dan deploy aplikasi
+   - Proses pertama biasanya memakan waktu 5-10 menit
+
+### 3. Akses Aplikasi
+
+Setelah deploy berhasil, aplikasi akan tersedia di URL:
+```
+https://wi-field-guide.onrender.com
+```
+(atau nama yang Anda pilih)
+
+## Catatan Penting:
+
+### Free Plan Render.com
+- Aplikasi akan sleep setelah 15 menit tidak ada aktivitas
+- Request pertama setelah sleep akan memakan waktu 30-60 detik untuk "wake up"
+- Cocok untuk testing dan demo
+- Tidak ada biaya sama sekali
+
+### Database SQLite
+- SQLite berfungsi baik untuk aplikasi read-heavy seperti ini
+- Data akan persist selama aplikasi tidak di-redeploy
+- Untuk production dengan banyak user, pertimbangkan migrasi ke PostgreSQL
+
+### Auto-Deploy
+Setiap kali Anda push ke branch `main`, Render akan otomatis deploy versi terbaru.
+
+### Firebase
+Firebase analytics dan database sudah dikonfigurasi dan akan tetap berfungsi di production.
+
+## Troubleshooting
+
+Jika ada error saat deploy:
+1. Check logs di Render dashboard
+2. Pastikan semua gem terinstall dengan benar
+3. Pastikan database migrations berhasil
+4. Check environment variables
+
+## Alternative: Railway.app
+
+Jika ingin alternatif lain, Railway.app juga mudah:
+1. Kunjungi https://railway.app
+2. Login dengan GitHub
+3. "New Project" → "Deploy from GitHub repo"
+4. Pilih repository
+5. Railway akan auto-detect Rails dan deploy
+
+URL: `https://[project-name].up.railway.app`
+
+## Alternative: Fly.io
+
+Untuk performa lebih baik:
+```bash
+# Install flyctl
+curl -L https://fly.io/install.sh | sh
+
+# Deploy
+fly launch
+fly deploy
+```
+
+---
+
+**Rekomendasi**: Untuk kemudahan dan gratis, gunakan Render.com dengan panduan di atas.

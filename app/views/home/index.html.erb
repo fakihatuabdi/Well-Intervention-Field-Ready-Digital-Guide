@@ -2,7 +2,20 @@
   <!-- Hero Section -->
   <div class="mb-12 bg-gradient-to-r from-sky-500 via-cyan-500 to-blue-500 rounded-2xl p-8 lg:p-12 text-white shadow-2xl hover-lift">
     <div class="max-w-4xl">
-      <h1 class="text-4xl lg:text-5xl font-bold mb-4 slide-in">Welcome to Well Intervention Field-Ready Digital Guide</h1>
+      <div class="flex items-center gap-6 mb-3">
+        <%= image_tag "logo.png", alt: "Company Logo", class: "object-contain scale-in flex-shrink-0", style: "width: 64px; height: 64px;" %>
+        <div class="flex-1">
+          <h1 class="text-4xl lg:text-5xl font-bold mb-2 slide-in">Welcome to Well Intervention Field-Ready Digital Guide</h1>
+        </div>
+      </div>
+      <style>
+        @media (min-width: 1024px) {
+          img[alt="Company Logo"] {
+            width: 256px !important;
+            height: 256px !important;
+          }
+        }
+      </style>
       <p class="text-lg text-sky-100 mb-6 slide-in" style="animation-delay: 0.1s;">
         Comprehensive Digital Companion for Upstream Oil & Gas Operations
       </p>
