@@ -1,11 +1,29 @@
 <div class="fade-in w-full max-w-4xl mx-auto">
   <!-- Breadcrumb -->
   <div class="mb-6">
-    <%= link_to handbook_path, class: "text-sky-600 hover:text-sky-800 inline-flex items-center gap-2 transition-all duration-300" do %>
+    <% 
+      back_path = case @article.category
+                  when 'general_knowledge'
+                    handbook_general_knowledge_path
+                  when 'wk_rokan'
+                    handbook_rig_hub_path
+                  else
+                    handbook_path
+                  end
+      back_label = case @article.category
+                   when 'general_knowledge'
+                     'Back to General Knowledge'
+                   when 'wk_rokan'
+                     'Back to Rig Hub'
+                   else
+                     'Back to Handbook'
+                   end
+    %>
+    <%= link_to back_path, class: "text-sky-600 hover:text-sky-800 inline-flex items-center gap-2 transition-all duration-300" do %>
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
       </svg>
-      Back to Handbook
+      <%= back_label %>
     <% end %>
   </div>
 
@@ -46,45 +64,25 @@
   document.addEventListener('DOMContentLoaded', function() {
     const articleId = <%= @article.id %>;
     
-    // Wait a bit for firebaseViewCounter to be initialized
-    setTimeout(() => {
-      if (typeof firebaseViewCounter !== 'undefined') {
-        // Increment view when page loads
-        firebaseViewCounter.incrementArticleView(articleId);
-        
-        // Watch for real-time updates (only if Firebase is configured)
-        if (firebaseViewCounter.isInitialized) {
-          firebaseViewCounter.watchArticleViews(articleId, (count) => {
-            const element = document.getElementById('view-count-<%= @article.id %>');
-            if (element && parseInt(element.textContent) !== count) {
-              // Use animated count update
-              firebaseViewCounter.animateCount(element, count);
-            }
-          });
-          
-          // Cleanup on page unload
-          window.addEventListener('beforeunload', () => {
-            firebaseViewCounter.unwatchArticleViews(articleId);
-          });
-        }
-      } else {
-        // Fallback: increment via Rails if Firebase not loaded
-        fetch(`/articles/${articleId}/increment_view`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-Token': document.querySelector('[name="csrf-token"]').content
-          }
-        })
-        .then(response => response.json())
-        .then(data => {
+    // Wait for firebaseViewCounter to be initialized
+    if (typeof firebaseViewCounter !== 'undefined') {
+      // Increment view when page loads
+      firebaseViewCounter.incrementArticleView(articleId);
+      
+      // Watch for real-time updates (only if Firebase is configured)
+      if (firebaseViewCounter.isInitialized) {
+        firebaseViewCounter.watchArticleViews(articleId, (count) => {
           const element = document.getElementById('view-count-<%= @article.id %>');
           if (element) {
-            element.textContent = data.view_count;
+            element.textContent = count;
           }
-        })
-        .catch(error => console.error('Error updating view count:', error));
+        });
+        
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+          firebaseViewCounter.unwatchArticleViews(articleId);
+        });
       }
-    }, 100);
+    }
   });
 </script>
