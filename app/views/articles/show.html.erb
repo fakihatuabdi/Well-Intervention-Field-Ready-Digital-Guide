@@ -63,13 +63,14 @@
 <script>
   document.addEventListener('turbo:load', function() {
     const articleId = <%= @article.id %>;
-    const viewCountKey = 'article_' + articleId + '_view_counted';
+    const pageLoadId = 'article_' + articleId + '_' + Date.now();
     
-    // Prevent duplicate increment in same session
-    if (window[viewCountKey]) {
-      console.log('📌 Article', articleId, 'already counted this session');
+    // Prevent duplicate execution on same page load
+    if (window[pageLoadId]) {
+      console.log('📌 Counter already running for this page load');
       return;
     }
+    window[pageLoadId] = true;
     
     function initializeArticleViewCounter() {
       if (typeof firebaseViewCounter === 'undefined') {
@@ -85,7 +86,6 @@
       }
       
       console.log('🔵 Initializing counter for article', articleId);
-      window[viewCountKey] = true;
       
       // Get current count and display
       firebaseViewCounter.getArticleViews(articleId)
