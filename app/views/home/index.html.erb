@@ -133,52 +133,45 @@
 
 <!-- Firebase Integration -->
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    // Function to initialize view counter for home page
-    function initializeHomeViewCounter() {
-      if (typeof firebaseViewCounter === 'undefined') {
-        console.log('Waiting for firebaseViewCounter...');
-        setTimeout(initializeHomeViewCounter, 500);
-        return;
-      }
+  // Function to initialize view counter for home page
+  function initializeHomeViewCounter() {
+    if (typeof firebaseViewCounter === 'undefined') {
+      console.log('Waiting for firebaseViewCounter...');
+      setTimeout(initializeHomeViewCounter, 500);
+      return;
+    }
+    
+    console.log('Home: Firebase initialized:', firebaseViewCounter.isInitialized);
+    
+    if (firebaseViewCounter.isInitialized) {
+      const popularArticles = <%= raw @popular_articles.pluck(:id).to_json %>;
       
-      console.log('Home: Firebase initialized:', firebaseViewCounter.isInitialized);
-      
-      if (firebaseViewCounter.isInitialized) {
-        const popularArticles = <%= raw @popular_articles.pluck(:id).to_json %>;
-        
-        // Load initial counts and watch for real-time updates
-        popularArticles.forEach(articleId => {
-          // Get initial count from Firebase
-          firebaseViewCounter.getArticleViews(articleId)
-            .then(count => {
-              console.log(`Article ${articleId} initial count:`, count);
-              const element = document.getElementById(`view-count-${articleId}`);
-              if (element) {
-                element.textContent = count || 0;
-              }
-            })
-            .catch(error => console.error(`Error getting count for article ${articleId}:`, error));
-          
-          // Watch for real-time updates
-          firebaseViewCounter.watchArticleViews(articleId, (count) => {
+      // Load initial counts and watch for real-time updates
+      popularArticles.forEach(articleId => {
+        // Get initial count from Firebase
+        firebaseViewCounter.getArticleViews(articleId)
+          .then(count => {
+            console.log(`Article ${articleId} initial count:`, count);
             const element = document.getElementById(`view-count-${articleId}`);
             if (element) {
               element.textContent = count || 0;
             }
-          });
-        });
+          })
+          .catch(error => console.error(`Error getting count for article ${articleId}:`, error));
         
-        // Cleanup on page unload
-        window.addEventListener('beforeunload', () => {
-          popularArticles.forEach(articleId => {
-            firebaseViewCounter.unwatchArticleViews(articleId);
-          });
+        // Watch for real-time updates
+        firebaseViewCounter.watchArticleViews(articleId, (count) => {
+          const element = document.getElementById(`view-count-${articleId}`);
+          if (element) {
+            element.textContent = count || 0;
+          }
         });
-      }
+      });
     }
-    
-    // Start initialization immediately
-    initializeHomeViewCounter();
-  })();
+  }
+  
+  // Run on initial load AND on every Turbo navigation
+  document.addEventListener('DOMContentLoaded', initializeHomeViewCounter);
+  document.addEventListener('turbo:load', initializeHomeViewCounter);
+  document.addEventListener('turbo:render', initializeHomeViewCounter);
 </script>
