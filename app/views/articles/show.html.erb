@@ -61,61 +61,71 @@
 </div>
 
 <script>
-  // Initialize immediately without waiting for DOMContentLoaded
-  // because Turbo may have already fired that event
-  (function() {
-    const articleId = <%= @article.id %>;
+  // Track if this article view has been counted in this session
+  const articleId = <%= @article.id %>;
+  const viewCountedKey = `article_${articleId}_view_counted`;
+  
+  // Function to initialize view counter
+  function initializeArticleViewCounter() {
+    console.log('Initializing view counter for article', articleId);
     
-    // Function to initialize view counter
-    function initializeViewCounter() {
-      console.log('Initializing view counter for article', articleId);
-      
-      if (typeof firebaseViewCounter === 'undefined') {
-        console.error('firebaseViewCounter not found, retrying in 500ms...');
-        setTimeout(initializeViewCounter, 500);
-        return;
-      }
-      
-      console.log('Firebase initialized:', firebaseViewCounter.isInitialized);
-      
-      // Get current count first
-      if (firebaseViewCounter.isInitialized) {
-        firebaseViewCounter.getArticleViews(articleId)
-          .then(count => {
-            console.log('Current view count from Firebase:', count);
-            const element = document.getElementById('view-count-<%= @article.id %>');
-            if (element) {
-              element.textContent = count || 0;
-            }
-            
-            // Increment view after getting current count
-            console.log('Incrementing view count...');
-            return firebaseViewCounter.incrementArticleView(articleId);
-          })
-          .then(() => {
-            console.log('Article <%= @article.id %> view incremented via Firebase');
-          })
-          .catch(error => console.error('Error with view counter:', error));
-        
-        // Watch for real-time updates
-        firebaseViewCounter.watchArticleViews(articleId, (count) => {
-          console.log('Real-time update - view count:', count);
+    if (typeof firebaseViewCounter === 'undefined') {
+      console.error('firebaseViewCounter not found, retrying in 500ms...');
+      setTimeout(initializeArticleViewCounter, 500);
+      return;
+    }
+    
+    console.log('Firebase initialized:', firebaseViewCounter.isInitialized);
+    
+    // Get current count first
+    if (firebaseViewCounter.isInitialized) {
+      firebaseViewCounter.getArticleViews(articleId)
+        .then(count => {
+          console.log('Current view count from Firebase:', count);
           const element = document.getElementById('view-count-<%= @article.id %>');
           if (element) {
             element.textContent = count || 0;
           }
-        });
-      }
+          
+          // Only increment if not already counted in this page view
+          const alreadyCounted = sessionStorage.getItem(viewCountedKey);
+          if (!alreadyCounted) {
+            console.log('Incrementing view count (first time)...');
+            sessionStorage.setItem(viewCountedKey, 'true');
+            return firebaseViewCounter.incrementArticleView(articleId);
+          } else {
+            console.log('View already counted for this article in this session, skipping increment');
+            return Promise.resolve();
+          }
+        })
+        .then(() => {
+          console.log('Article <%= @article.id %> view counter updated');
+        })
+        .catch(error => console.error('Error with view counter:', error));
       
-      // Cleanup on page unload
-      window.addEventListener('beforeunload', () => {
-        if (firebaseViewCounter.isInitialized) {
-          firebaseViewCounter.unwatchArticleViews(articleId);
+      // Watch for real-time updates
+      firebaseViewCounter.watchArticleViews(articleId, (count) => {
+        console.log('Real-time update - view count:', count);
+        const element = document.getElementById('view-count-<%= @article.id %>');
+        if (element) {
+          element.textContent = count || 0;
         }
       });
     }
-    
-    // Start initialization immediately
-    initializeViewCounter();
-  })();
+  }
+  
+  // Run on Turbo navigation
+  document.addEventListener('turbo:load', function() {
+    // Clear the session flag when navigating to this article
+    // This ensures each article visit gets counted once
+    sessionStorage.removeItem(viewCountedKey);
+    initializeArticleViewCounter();
+  });
+  
+  // Also run immediately if page is already loaded
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeArticleViewCounter);
+  } else {
+    initializeArticleViewCounter();
+  }
 </script>
