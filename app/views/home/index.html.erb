@@ -131,38 +131,54 @@
   </div>
 </div>
 
-<!-- Firebase Integration Placeholder -->
+<!-- Firebase Integration -->
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    // Initialize real-time view counter for popular articles
-    if (typeof firebaseViewCounter !== 'undefined' && firebaseViewCounter.isInitialized) {
-      const popularArticles = <%= raw @popular_articles.pluck(:id).to_json %>;
+    // Function to initialize view counter for home page
+    function initializeHomeViewCounter() {
+      if (typeof firebaseViewCounter === 'undefined') {
+        console.log('Waiting for firebaseViewCounter...');
+        setTimeout(initializeHomeViewCounter, 500);
+        return;
+      }
       
-      // Load initial counts and watch for real-time updates
-      popularArticles.forEach(articleId => {
-        // Get initial count from Firebase
-        firebaseViewCounter.getArticleViews(articleId).then(count => {
-          const element = document.getElementById(`view-count-${articleId}`);
-          if (element) {
-            element.textContent = count || 0;
-          }
+      console.log('Home: Firebase initialized:', firebaseViewCounter.isInitialized);
+      
+      if (firebaseViewCounter.isInitialized) {
+        const popularArticles = <%= raw @popular_articles.pluck(:id).to_json %>;
+        
+        // Load initial counts and watch for real-time updates
+        popularArticles.forEach(articleId => {
+          // Get initial count from Firebase
+          firebaseViewCounter.getArticleViews(articleId)
+            .then(count => {
+              console.log(`Article ${articleId} initial count:`, count);
+              const element = document.getElementById(`view-count-${articleId}`);
+              if (element) {
+                element.textContent = count || 0;
+              }
+            })
+            .catch(error => console.error(`Error getting count for article ${articleId}:`, error));
+          
+          // Watch for real-time updates
+          firebaseViewCounter.watchArticleViews(articleId, (count) => {
+            const element = document.getElementById(`view-count-${articleId}`);
+            if (element) {
+              element.textContent = count || 0;
+            }
+          });
         });
         
-        // Watch for real-time updates
-        firebaseViewCounter.watchArticleViews(articleId, (count) => {
-          const element = document.getElementById(`view-count-${articleId}`);
-          if (element) {
-            element.textContent = count || 0;
-          }
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+          popularArticles.forEach(articleId => {
+            firebaseViewCounter.unwatchArticleViews(articleId);
+          });
         });
-      });
-      
-      // Cleanup on page unload
-      window.addEventListener('beforeunload', () => {
-        popularArticles.forEach(articleId => {
-          firebaseViewCounter.unwatchArticleViews(articleId);
-        });
-      });
+      }
     }
+    
+    // Start initialization
+    initializeHomeViewCounter();
   });
 </script>

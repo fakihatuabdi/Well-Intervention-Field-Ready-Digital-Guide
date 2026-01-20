@@ -64,35 +64,55 @@
   document.addEventListener('DOMContentLoaded', function() {
     const articleId = <%= @article.id %>;
     
-    // Wait for firebaseViewCounter to be initialized
-    if (typeof firebaseViewCounter !== 'undefined') {
-      // Get current count first, then increment
-      if (firebaseViewCounter.isInitialized) {
-        firebaseViewCounter.getArticleViews(articleId).then(count => {
-          const element = document.getElementById('view-count-<%= @article.id %>');
-          if (element) {
-            element.textContent = count || 0;
-          }
-        });
+    // Function to initialize view counter
+    function initializeViewCounter() {
+      console.log('Initializing view counter for article', articleId);
+      
+      if (typeof firebaseViewCounter === 'undefined') {
+        console.error('firebaseViewCounter not found, retrying in 500ms...');
+        setTimeout(initializeViewCounter, 500);
+        return;
       }
       
-      // Increment view when page loads
-      firebaseViewCounter.incrementArticleView(articleId);
+      console.log('Firebase initialized:', firebaseViewCounter.isInitialized);
       
-      // Watch for real-time updates (only if Firebase is configured)
+      // Get current count first
       if (firebaseViewCounter.isInitialized) {
-        firebaseViewCounter.watchArticleViews(articleId, (count) => {
-          const element = document.getElementById('view-count-<%= @article.id %>');
-          if (element) {
-            element.textContent = count || 0;
-          }
-        });
+        firebaseViewCounter.getArticleViews(articleId)
+          .then(count => {
+            console.log('Current view count from Firebase:', count);
+            const element = document.getElementById('view-count-<%= @article.id %>');
+            if (element) {
+              element.textContent = count || 0;
+            }
+          })
+          .catch(error => console.error('Error getting view count:', error));
         
-        // Cleanup on page unload
-        window.addEventListener('beforeunload', () => {
-          firebaseViewCounter.unwatchArticleViews(articleId);
+        // Watch for real-time updates
+        firebaseViewCounter.watchArticleViews(articleId, (count) => {
+          console.log('Real-time update - view count:', count);
+          const element = document.getElementById('view-count-<%= @article.id %>');
+          if (element) {
+            element.textContent = count || 0;
+          }
         });
       }
+      
+      // Increment view when page loads (after a short delay to ensure listener is set up)
+      setTimeout(() => {
+        console.log('Incrementing view count...');
+        firebaseViewCounter.incrementArticleView(articleId);
+      }, 300);
+      
+      // Cleanup on page unload
+      window.addEventListener('beforeunload', () => {
+        if (firebaseViewCounter.isInitialized) {
+          firebaseViewCounter.unwatchArticleViews(articleId);
+        }
+      });
     }
+    
+    // Start initialization
+    initializeViewCounter();
   });
 </script>
