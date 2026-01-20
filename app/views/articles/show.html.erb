@@ -85,8 +85,15 @@
             if (element) {
               element.textContent = count || 0;
             }
+            
+            // Increment view after getting current count
+            console.log('Incrementing view count...');
+            return firebaseViewCounter.incrementArticleView(articleId);
           })
-          .catch(error => console.error('Error getting view count:', error));
+          .then(() => {
+            console.log('Article <%= @article.id %> view incremented via Firebase');
+          })
+          .catch(error => console.error('Error with view counter:', error));
         
         // Watch for real-time updates
         firebaseViewCounter.watchArticleViews(articleId, (count) => {
@@ -97,12 +104,6 @@
           }
         });
       }
-      
-      // Increment view when page loads (after a short delay to ensure listener is set up)
-      setTimeout(() => {
-        console.log('Incrementing view count...');
-        firebaseViewCounter.incrementArticleView(articleId);
-      }, 300);
       
       // Cleanup on page unload
       window.addEventListener('beforeunload', () => {
