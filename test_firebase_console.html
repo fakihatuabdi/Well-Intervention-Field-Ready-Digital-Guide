@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Firebase Counter Test</title>
+  <style>
+    body {
+      font-family: monospace;
+      padding: 20px;
+      background: #1e1e1e;
+      color: #d4d4d4;
+    }
+    .test-result {
+      padding: 10px;
+      margin: 10px 0;
+      border-left: 4px solid;
+    }
+    .success {
+      border-color: #4caf50;
+      background: rgba(76, 175, 80, 0.1);
+    }
+    .error {
+      border-color: #f44336;
+      background: rgba(244, 67, 54, 0.1);
+    }
+    .info {
+      border-color: #2196f3;
+      background: rgba(33, 150, 243, 0.1);
+    }
+    button {
+      padding: 10px 20px;
+      margin: 5px;
+      background: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    button:hover {
+      background: #45a049;
+    }
+    #results {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🔥 Firebase Counter Debug Tool</h1>
+  <p>Test Firebase connectivity and counter functionality</p>
+  
+  <div>
+    <button onclick="runAllTests()">🧪 Run All Tests</button>
+    <button onclick="clearResults()">🗑️ Clear Results</button>
+    <button onclick="testIncrement()">➕ Test Increment</button>
+    <button onclick="testRead()">📖 Test Read</button>
+  </div>
+
+  <div id="results"></div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+
+  <script>
+    // Firebase Configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyDyH9rJfU1W4g7fR7E3W3wFAcmplxTN_5Q",
+      authDomain: "wi-field-ready-digital-guide.firebaseapp.com",
+      databaseURL: "https://wi-field-ready-digital-guide-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "wi-field-ready-digital-guide",
+      storageBucket: "wi-field-ready-digital-guide.firebasestorage.app",
+      messagingSenderId: "439711889516",
+      appId: "1:439711889516:web:c66cfc14bc52f6de3df1c2",
+      measurementId: "G-S3DQZZX1ZK"
+    };
+
+    // Initialize Firebase
+    let app, database;
+    try {
+      app = firebase.initializeApp(firebaseConfig);
+      database = firebase.database();
+      addResult('info', '✅ Firebase initialized successfully');
+    } catch (error) {
+      addResult('error', `❌ Firebase initialization failed: ${error.message}`);
+    }
+
+    function addResult(type, message) {
+      const resultsDiv = document.getElementById('results');
+      const resultItem = document.createElement('div');
+      resultItem.className = `test-result ${type}`;
+      resultItem.innerHTML = `<strong>${new Date().toLocaleTimeString()}</strong> - ${message}`;
+      resultsDiv.appendChild(resultItem);
+      resultsDiv.scrollTop = resultsDiv.scrollHeight;
+    }
+
+    function clearResults() {
+      document.getElementById('results').innerHTML = '';
+    }
+
+    async function runAllTests() {
+      clearResults();
+      addResult('info', '🧪 Starting Firebase tests...');
+
+      // Test 1: Firebase SDK
+      if (typeof firebase !== 'undefined') {
+        addResult('success', '✅ Test 1: Firebase SDK loaded');
+      } else {
+        addResult('error', '❌ Test 1: Firebase SDK not loaded');
+        return;
+      }
+
+      // Test 2: Database
+      if (firebase.database) {
+        addResult('success', '✅ Test 2: Firebase Database available');
+      } else {
+        addResult('error', '❌ Test 2: Firebase Database not available');
+        return;
+      }
+
+      // Test 3: Connection
+      try {
+        const connectedRef = firebase.database().ref('.info/connected');
+        const snapshot = await connectedRef.once('value');
+        if (snapshot.val() === true) {
+          addResult('success', '✅ Test 3: Connected to Firebase');
+        } else {
+          addResult('error', '❌ Test 3: Not connected to Firebase');
+        }
+      } catch (error) {
+        addResult('error', `❌ Test 3: Connection test failed - ${error.message}`);
+      }
+
+      // Test 4: Read Permission
+      try {
+        const testRef = firebase.database().ref('article_views/1');
+        const snapshot = await testRef.once('value');
+        addResult('success', `✅ Test 4: Read permission OK - Current value: ${snapshot.val() || 0}`);
+      } catch (error) {
+        addResult('error', `❌ Test 4: Read permission failed - ${error.message}`);
+      }
+
+      // Test 5: Write Permission
+      try {
+        const testRef = firebase.database().ref('article_views/999');
+        await testRef.set(123);
+        addResult('success', '✅ Test 5: Write permission OK');
+        // Clean up
+        await testRef.remove();
+        addResult('info', 'ℹ️ Test data cleaned up');
+      } catch (error) {
+        addResult('error', `❌ Test 5: Write permission failed - ${error.message}`);
+      }
+
+      addResult('success', '🎉 All tests completed!');
+    }
+
+    async function testIncrement() {
+      try {
+        const articleId = 1;
+        const articleRef = firebase.database().ref(`article_views/${articleId}`);
+        
+        addResult('info', `➕ Incrementing article ${articleId}...`);
+        
+        await articleRef.transaction((current) => {
+          return (current || 0) + 1;
+        });
+        
+        const snapshot = await articleRef.once('value');
+        addResult('success', `✅ Increment successful! New count: ${snapshot.val()}`);
+      } catch (error) {
+        addResult('error', `❌ Increment failed: ${error.message}`);
+      }
+    }
+
+    async function testRead() {
+      try {
+        const articleId = 1;
+        const articleRef = firebase.database().ref(`article_views/${articleId}`);
+        
+        addResult('info', `📖 Reading article ${articleId} count...`);
+        
+        const snapshot = await articleRef.once('value');
+        const count = snapshot.val() || 0;
+        
+        addResult('success', `✅ Read successful! Current count: ${count}`);
+      } catch (error) {
+        addResult('error', `❌ Read failed: ${error.message}`);
+      }
+    }
+
+    // Run tests on load
+    window.addEventListener('load', () => {
+      setTimeout(runAllTests, 1000);
+    });
+  </script>
+</body>
+</html>
