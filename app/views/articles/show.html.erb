@@ -61,7 +61,9 @@
 </div>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
+  // Initialize immediately without waiting for DOMContentLoaded
+  // because Turbo may have already fired that event
+  (function() {
     const articleId = <%= @article.id %>;
     
     // Function to initialize view counter
@@ -113,7 +115,7 @@
       });
     }
     
-    // Start initialization
+    // Start initialization immediately
     initializeViewCounter();
-  });
+  })();
 </script>
