@@ -74,10 +74,10 @@
       </h2>
     </div>
     
-    <div class="space-y-3">
+    <div id="popular-articles-container" class="space-y-3">
       <% if @popular_articles.any? %>
         <% @popular_articles.each do |article| %>
-          <%= link_to article_path(article), class: "block p-4 bg-gradient-to-r from-slate-50 to-sky-50/30 rounded-lg hover:shadow-lg transition-all duration-300 border elegant-border scale-in" do %>
+          <%= link_to article_path(article), class: "article-card block p-4 bg-gradient-to-r from-slate-50 to-sky-50/30 rounded-lg hover:shadow-lg transition-all duration-300 border elegant-border scale-in", data: { article_id: article.id } do %>
             <h4 class="font-semibold text-slate-800 mb-2"><%= article.title %></h4>
             <div class="flex items-center gap-4 text-sm text-slate-600">
               <span class="flex items-center gap-1">
@@ -132,7 +132,7 @@
 </div>
 
 <!-- Firebase Integration -->
-<script>
+<script data-turbo-eval="false">
   // Function to initialize view counter for home page
   function initializeHomeViewCounter() {
     if (typeof firebaseViewCounter === 'undefined') {
@@ -145,29 +145,73 @@
     
     if (firebaseViewCounter.isInitialized) {
       const popularArticles = <%= raw @popular_articles.pluck(:id).to_json %>;
+      const articleCounts = {};
+      let loadedCount = 0;
       
-      // Load initial counts and watch for real-time updates
+      // Load initial counts for all articles
       popularArticles.forEach(articleId => {
-        // Get initial count from Firebase
         firebaseViewCounter.getArticleViews(articleId)
           .then(count => {
             console.log(`Article ${articleId} initial count:`, count);
+            articleCounts[articleId] = count || 0;
+            
+            // Update display
             const element = document.getElementById(`view-count-${articleId}`);
             if (element) {
               element.textContent = count || 0;
+            }
+            
+            loadedCount++;
+            
+            // When all counts loaded, sort and display top 5
+            if (loadedCount === popularArticles.length) {
+              sortAndDisplayPopularArticles(articleCounts);
             }
           })
           .catch(error => console.error(`Error getting count for article ${articleId}:`, error));
         
         // Watch for real-time updates
         firebaseViewCounter.watchArticleViews(articleId, (count) => {
+          articleCounts[articleId] = count || 0;
           const element = document.getElementById(`view-count-${articleId}`);
           if (element) {
             element.textContent = count || 0;
           }
+          // Re-sort when any count updates
+          sortAndDisplayPopularArticles(articleCounts);
         });
       });
     }
+  }
+  
+  // Sort articles by view count and show only top 5
+  function sortAndDisplayPopularArticles(articleCounts) {
+    const container = document.getElementById('popular-articles-container');
+    if (!container) return;
+    
+    // Get all article cards
+    const cards = Array.from(container.querySelectorAll('.article-card'));
+    
+    // Sort by view count (descending)
+    cards.sort((a, b) => {
+      const idA = parseInt(a.dataset.articleId);
+      const idB = parseInt(b.dataset.articleId);
+      return (articleCounts[idB] || 0) - (articleCounts[idA] || 0);
+    });
+    
+    // Show only top 5
+    cards.forEach((card, index) => {
+      if (index < 5) {
+        card.style.display = 'block';
+        card.style.order = index;
+      } else {
+        card.style.display = 'none';
+      }
+    });
+    
+    // Apply order to container
+    container.style.display = 'flex';
+    container.style.flexDirection = 'column';
   }
   
   // Run on initial load AND on every Turbo navigation
