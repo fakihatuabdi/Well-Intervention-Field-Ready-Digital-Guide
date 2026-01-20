@@ -46,38 +46,36 @@
         font-family: 'Inter', sans-serif;
       }
       
-      @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(15px); }
-        to { opacity: 1; transform: translateY(0); }
-      }
-      
-      @keyframes slideIn {
-        from { opacity: 0; transform: translateX(-15px); }
-        to { opacity: 1; transform: translateX(0); }
-      }
-      
-      @keyframes scaleIn {
-        from { opacity: 0; transform: scale(0.95); }
-        to { opacity: 1; transform: scale(1); }
+      /* Simple fade animation - no flash */
+      @keyframes gentleFade {
+        from { opacity: 0; }
+        to { opacity: 1; }
       }
       
       .fade-in {
-        animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-      }
-      
-      /* Disable animation on Turbo cache restore */
-      .turbo-cache-restore .fade-in,
-      .turbo-cache-restore .slide-in,
-      .turbo-cache-restore .scale-in {
-        animation: none !important;
+        opacity: 0;
+        animation: gentleFade 0.3s ease-out forwards;
       }
       
       .slide-in {
-        animation: slideIn 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+        opacity: 0;
+        animation: gentleFade 0.3s ease-out forwards;
       }
       
       .scale-in {
-        animation: scaleIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        opacity: 0;
+        animation: gentleFade 0.3s ease-out forwards;
+      }
+      
+      /* Turbo smooth transitions */
+      html.turbo-loading {
+        cursor: wait;
+      }
+      
+      /* Prevent flash on Turbo navigation */
+      body {
+        opacity: 1;
+        transition: none;
       }
       
       .hover-lift {
@@ -97,6 +95,12 @@
       
       .elegant-border {
         border: 1px solid rgba(14, 165, 233, 0.15);
+      }
+      
+      /* Turbo progress bar styling */
+      .turbo-progress-bar {
+        height: 3px;
+        background: linear-gradient(to right, #0ea5e9, #06b6d4);
       }
     </style>
   </head>
@@ -256,16 +260,13 @@
         }
       });
       
-      // Prevent animation replay on Turbo cache restore
-      document.addEventListener('turbo:before-cache', function() {
-        document.body.classList.add('turbo-cache-restore');
+      // Smooth Turbo navigation
+      document.addEventListener('turbo:before-visit', function() {
+        document.body.style.opacity = '1';
       });
       
       document.addEventListener('turbo:load', function() {
-        // Remove class after a brief delay to allow re-animation on fresh loads
-        setTimeout(() => {
-          document.body.classList.remove('turbo-cache-restore');
-        }, 100);
+        document.body.style.opacity = '1';
       });
     </script>
   </body>

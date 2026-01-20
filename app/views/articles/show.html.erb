@@ -63,65 +63,55 @@
 <script data-turbo-eval="false">
   (function() {
     const articleId = <%= @article.id %>;
-    const viewCountedKey = `article_${articleId}_view_counted_${Date.now()}`;
-    let isInitialized = false;
+    const viewCountedKey = `viewed_article_${articleId}`;
+    let hasIncremented = false;
     
-    // Function to initialize view counter
     function initializeArticleViewCounter() {
-      // Prevent multiple initializations
-      if (isInitialized) {
-        console.log('Article counter already initialized, skipping...');
+      if (hasIncremented) {
+        console.log('Counter already initialized for article', articleId);
         return;
       }
-      
-      console.log('Initializing view counter for article', articleId);
       
       if (typeof firebaseViewCounter === 'undefined') {
-        console.error('firebaseViewCounter not found, retrying in 500ms...');
-        setTimeout(initializeArticleViewCounter, 500);
+        setTimeout(initializeArticleViewCounter, 300);
         return;
       }
       
-      isInitialized = true;
-      console.log('Firebase initialized:', firebaseViewCounter.isInitialized);
+      if (!firebaseViewCounter.isInitialized) {
+        setTimeout(initializeArticleViewCounter, 300);
+        return;
+      }
       
-      // Get current count first
-      if (firebaseViewCounter.isInitialized) {
-        firebaseViewCounter.getArticleViews(articleId)
-          .then(count => {
-            console.log('Current view count from Firebase:', count);
-            const element = document.getElementById('view-count-<%= @article.id %>');
-            if (element) {
-              element.textContent = count || 0;
-            }
-            
-            // Only increment if not already counted
-            const alreadyCounted = sessionStorage.getItem(viewCountedKey);
-            if (!alreadyCounted) {
-              console.log('Incrementing view count for article', articleId);
-              sessionStorage.setItem(viewCountedKey, 'true');
-              return firebaseViewCounter.incrementArticleView(articleId);
-            } else {
-              console.log('View already counted, skipping increment');
-              return Promise.resolve();
-            }
-          })
-          .then(() => {
-            console.log('Article', articleId, 'view counter updated');
-          })
-          .catch(error => console.error('Error with view counter:', error));
-        
-        // Watch for real-time updates
-        firebaseViewCounter.watchArticleViews(articleId, (count) => {
+      console.log('Initializing counter for article', articleId);
+      hasIncremented = true;
+      
+      // Get current count and display
+      firebaseViewCounter.getArticleViews(articleId)
+        .then(count => {
           const element = document.getElementById('view-count-<%= @article.id %>');
           if (element) {
             element.textContent = count || 0;
           }
-        });
-      }
+          
+          // Increment if not already counted in this browser session
+          if (!sessionStorage.getItem(viewCountedKey)) {
+            console.log('Incrementing view for article', articleId);
+            sessionStorage.setItem(viewCountedKey, Date.now());
+            return firebaseViewCounter.incrementArticleView(articleId);
+          }
+        })
+        .catch(error => console.error('Counter error:', error));
+      
+      // Watch for real-time updates
+      firebaseViewCounter.watchArticleViews(articleId, (count) => {
+        const element = document.getElementById('view-count-<%= @article.id %>');
+        if (element) {
+          element.textContent = count || 0;
+        }
+      });
     }
     
-    // Initialize immediately
+    // Start immediately
     initializeArticleViewCounter();
   })();
 </script>

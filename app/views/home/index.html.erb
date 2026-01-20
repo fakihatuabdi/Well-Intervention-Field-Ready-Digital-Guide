@@ -16,10 +16,10 @@
           }
         }
       </style>
-      <p class="text-lg text-sky-100 mb-6 slide-in" style="animation-delay: 0.1s;">
+      <p class="text-lg text-sky-100 mb-6">
         Comprehensive Digital Companion for Upstream Oil & Gas Operations
       </p>
-      <div class="flex flex-wrap gap-4 slide-in" style="animation-delay: 0.2s;">
+      <div class="flex flex-wrap gap-4">
         <%= link_to "Explore Handbook", handbook_path, class: "bg-white text-sky-700 px-6 py-3 rounded-lg font-semibold hover:bg-sky-50 transition-all duration-300 inline-block shadow-lg hover:shadow-xl" %>
         <%= link_to "Search Articles", search_path, class: "bg-sky-700/50 hover:bg-sky-700/70 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 inline-block backdrop-blur-sm" %>
       </div>
@@ -27,7 +27,7 @@
   </div>
 
   <!-- Case Studies / Lessons Learned -->
-  <div class="mb-12 fade-in" style="animation-delay: 0.2s;">
+  <div class="mb-12 fade-in">
     <div class="flex items-center justify-between mb-6">
       <h2 class="text-2xl font-bold text-slate-800 flex items-center gap-2">
         <svg class="w-6 h-6 text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -63,7 +63,7 @@
   </div>
 
   <!-- Popular Handbook Articles -->
-  <div class="mb-12 bg-white rounded-2xl shadow-lg p-6 lg:p-8 hover-lift fade-in elegant-border" style="animation-delay: 0.3s;">
+  <div class="mb-12 bg-white rounded-2xl shadow-lg p-6 lg:p-8 hover-lift fade-in elegant-border">
     <div class="flex items-center justify-between mb-6">
       <h2 class="text-2xl font-bold text-slate-800 flex items-center gap-2">
         <svg class="w-6 h-6 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -100,7 +100,7 @@
   </div>
 
   <!-- Updates & Notices -->
-  <div class="glass-effect rounded-2xl p-6 lg:p-8 shadow-lg fade-in hover-lift elegant-border" style="animation-delay: 0.4s;">
+  <div class="glass-effect rounded-2xl p-6 lg:p-8 shadow-lg fade-in hover-lift elegant-border">
     <h3 class="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-2">
       <svg class="w-6 h-6 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path>
@@ -133,89 +133,93 @@
 
 <!-- Firebase Integration -->
 <script data-turbo-eval="false">
-  // Function to initialize view counter for home page
+  let homeInitialized = false;
+  
   function initializeHomeViewCounter() {
+    if (homeInitialized) return;
+    
     if (typeof firebaseViewCounter === 'undefined') {
-      console.log('Waiting for firebaseViewCounter...');
-      setTimeout(initializeHomeViewCounter, 500);
+      setTimeout(initializeHomeViewCounter, 300);
       return;
     }
     
-    console.log('Home: Firebase initialized:', firebaseViewCounter.isInitialized);
+    if (!firebaseViewCounter.isInitialized) {
+      setTimeout(initializeHomeViewCounter, 300);
+      return;
+    }
     
-    if (firebaseViewCounter.isInitialized) {
-      const popularArticles = <%= raw @popular_articles.pluck(:id).to_json %>;
-      const articleCounts = {};
-      let loadedCount = 0;
-      
-      // Load initial counts for all articles
-      popularArticles.forEach(articleId => {
-        firebaseViewCounter.getArticleViews(articleId)
-          .then(count => {
-            console.log(`Article ${articleId} initial count:`, count);
-            articleCounts[articleId] = count || 0;
-            
-            // Update display
-            const element = document.getElementById(`view-count-${articleId}`);
-            if (element) {
-              element.textContent = count || 0;
-            }
-            
-            loadedCount++;
-            
-            // When all counts loaded, sort and display top 5
-            if (loadedCount === popularArticles.length) {
-              sortAndDisplayPopularArticles(articleCounts);
-            }
-          })
-          .catch(error => console.error(`Error getting count for article ${articleId}:`, error));
-        
-        // Watch for real-time updates
-        firebaseViewCounter.watchArticleViews(articleId, (count) => {
+    homeInitialized = true;
+    console.log('Home: Initializing view counters');
+    
+    const popularArticles = <%= raw @popular_articles.pluck(:id).to_json %>;
+    const articleCounts = {};
+    let loadedCount = 0;
+    
+    // Load counts for all articles
+    popularArticles.forEach(articleId => {
+      firebaseViewCounter.getArticleViews(articleId)
+        .then(count => {
           articleCounts[articleId] = count || 0;
+          
+          // Update display
           const element = document.getElementById(`view-count-${articleId}`);
           if (element) {
             element.textContent = count || 0;
           }
-          // Re-sort when any count updates
-          sortAndDisplayPopularArticles(articleCounts);
-        });
+          
+          loadedCount++;
+          
+          // Sort after all loaded
+          if (loadedCount === popularArticles.length) {
+            sortPopularArticles(articleCounts);
+          }
+        })
+        .catch(error => console.error(`Error loading count for article ${articleId}:`, error));
+      
+      // Watch for real-time updates
+      firebaseViewCounter.watchArticleViews(articleId, (count) => {
+        articleCounts[articleId] = count || 0;
+        const element = document.getElementById(`view-count-${articleId}`);
+        if (element) {
+          element.textContent = count || 0;
+        }
+        // Re-sort immediately when any count updates
+        sortPopularArticles(articleCounts);
       });
-    }
+    });
   }
   
-  // Sort articles by view count and show only top 5
-  function sortAndDisplayPopularArticles(articleCounts) {
+  // Sort and display top 5 popular articles
+  function sortPopularArticles(counts) {
     const container = document.getElementById('popular-articles-container');
     if (!container) return;
     
-    // Get all article cards
     const cards = Array.from(container.querySelectorAll('.article-card'));
+    if (cards.length === 0) return;
     
-    // Sort by view count (descending)
+    // Sort by view count descending
     cards.sort((a, b) => {
       const idA = parseInt(a.dataset.articleId);
       const idB = parseInt(b.dataset.articleId);
-      return (articleCounts[idB] || 0) - (articleCounts[idA] || 0);
+      const countA = counts[idA] || 0;
+      const countB = counts[idB] || 0;
+      return countB - countA;
     });
+    
+    // Clear container
+    container.innerHTML = '';
     
     // Show only top 5
-    cards.forEach((card, index) => {
-      if (index < 5) {
-        card.style.display = 'block';
-        card.style.order = index;
-      } else {
-        card.style.display = 'none';
-      }
+    cards.slice(0, 5).forEach(card => {
+      card.style.display = 'block';
+      container.appendChild(card);
     });
-    
-    // Apply order to container
-    container.style.display = 'flex';
-    container.style.flexDirection = 'column';
   }
   
-  // Run on initial load AND on every Turbo navigation
+  // Initialize on load
   document.addEventListener('DOMContentLoaded', initializeHomeViewCounter);
-  document.addEventListener('turbo:load', initializeHomeViewCounter);
-  document.addEventListener('turbo:render', initializeHomeViewCounter);
+  document.addEventListener('turbo:load', function() {
+    homeInitialized = false;
+    initializeHomeViewCounter();
+  });
 </script>
