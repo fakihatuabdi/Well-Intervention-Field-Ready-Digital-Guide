@@ -3,6 +3,7 @@ services:
     name: Well-Intervention-Field-Ready-Digital-Guide
     runtime: ruby
     plan: free
+    branch: main
     buildCommand: "./bin/render-build.sh"
     startCommand: "bundle exec puma -C config/puma.rb"
     envVars:
