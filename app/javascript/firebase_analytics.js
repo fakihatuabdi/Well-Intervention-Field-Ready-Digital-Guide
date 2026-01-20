@@ -7,6 +7,7 @@ class FirebaseViewCounter {
     if (typeof firebase !== 'undefined' && firebase.database) {
       this.database = firebase.database();
       this.isInitialized = true;
+      console.log('FirebaseViewCounter: Database connected');
     } else {
       console.warn('Firebase not initialized. View counting will use fallback mode.');
       this.isInitialized = false;
@@ -26,11 +27,12 @@ class FirebaseViewCounter {
       await viewRef.transaction((currentViews) => {
         return (currentViews || 0) + 1;
       });
-      console.log(`Article ${articleId} view incremented via Firebase`);
+      console.log(`✅ Article ${articleId} view incremented via Firebase`);
+      return true;
     } catch (error) {
-      console.error('Error incrementing view:', error);
+      console.error('❌ Error incrementing view:', error);
       // Fallback to Rails
-      this.incrementViaRails(articleId);
+      return this.incrementViaRails(articleId);
     }
   }
 
@@ -111,8 +113,13 @@ class FirebaseViewCounter {
   }
 }
 
-// Initialize global instance
+// Make class globally available
+window.FirebaseViewCounter = FirebaseViewCounter;
+
+// Initialize global instance when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
-  window.firebaseViewCounter = new FirebaseViewCounter();
-  console.log('Firebase View Counter initialized');
+  if (!window.firebaseViewCounter) {
+    window.firebaseViewCounter = new FirebaseViewCounter();
+    console.log('Firebase View Counter initialized from firebase_analytics.js');
+  }
 });
