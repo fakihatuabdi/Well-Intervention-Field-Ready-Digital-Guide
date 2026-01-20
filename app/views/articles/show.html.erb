@@ -63,7 +63,6 @@
 <script data-turbo-eval="false">
   (function() {
     const articleId = <%= @article.id %>;
-    const viewCountedKey = `viewed_article_${articleId}`;
     let hasIncremented = false;
     
     function initializeArticleViewCounter() {
@@ -88,17 +87,18 @@
       // Get current count and display
       firebaseViewCounter.getArticleViews(articleId)
         .then(count => {
+          console.log('Current count:', count);
           const element = document.getElementById('view-count-<%= @article.id %>');
           if (element) {
             element.textContent = count || 0;
           }
           
-          // Increment if not already counted in this browser session
-          if (!sessionStorage.getItem(viewCountedKey)) {
-            console.log('Incrementing view for article', articleId);
-            sessionStorage.setItem(viewCountedKey, Date.now());
-            return firebaseViewCounter.incrementArticleView(articleId);
-          }
+          // Always increment on page view
+          console.log('Incrementing view for article', articleId);
+          return firebaseViewCounter.incrementArticleView(articleId);
+        })
+        .then(() => {
+          console.log('Article', articleId, 'incremented successfully');
         })
         .catch(error => console.error('Counter error:', error));
       
