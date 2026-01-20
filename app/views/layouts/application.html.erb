@@ -39,6 +39,64 @@
         firebase.initializeApp(firebaseConfig);
         console.log('🔥 Firebase initialized successfully!');
       }
+      
+      // FirebaseViewCounter class - defined globally
+      class FirebaseViewCounter {
+        constructor() {
+          if (typeof firebase !== 'undefined' && firebase.database) {
+            this.database = firebase.database();
+            this.isInitialized = true;
+            console.log('✅ FirebaseViewCounter: Database connected');
+          } else {
+            console.warn('⚠️ Firebase not initialized');
+            this.isInitialized = false;
+          }
+        }
+        
+        async incrementArticleView(articleId) {
+          if (!this.isInitialized) {
+            console.warn('Firebase not initialized, cannot increment view');
+            return false;
+          }
+          
+          try {
+            const viewRef = this.database.ref(`article_views/${articleId}`);
+            await viewRef.transaction((currentValue) => {
+              return (currentValue || 0) + 1;
+            });
+            console.log(`✅ Article ${articleId} view incremented via Firebase`);
+            return true;
+          } catch (error) {
+            console.error('❌ Error incrementing view:', error);
+            return false;
+          }
+        }
+        
+        async getArticleViews(articleId) {
+          if (!this.isInitialized) return 0;
+          
+          try {
+            const snapshot = await this.database.ref(`article_views/${articleId}`).once('value');
+            return snapshot.val() || 0;
+          } catch (error) {
+            console.error('Error getting views:', error);
+            return 0;
+          }
+        }
+        
+        watchArticleViews(articleId, callback) {
+          if (!this.isInitialized) return;
+          
+          const viewRef = this.database.ref(`article_views/${articleId}`);
+          viewRef.on('value', (snapshot) => {
+            callback(snapshot.val() || 0);
+          });
+        }
+      }
+      
+      // Create global instance
+      window.firebaseViewCounter = new FirebaseViewCounter();
+      console.log('🎯 Global firebaseViewCounter initialized');
     </script>
     
     <style>
