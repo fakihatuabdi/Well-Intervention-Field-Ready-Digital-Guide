@@ -85,7 +85,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                 </svg>
-                <span id="view-count-<%= article.id %>" class="font-medium text-sky-700"><%= article.view_count %></span> views
+                <span id="view-count-<%= article.id %>" class="font-medium text-sky-700">0</span> views
               </span>
               <span class="text-slate-400 capitalize"><%= article.category.gsub('_', ' ') %></span>
             </div>
@@ -138,12 +138,21 @@
     if (typeof firebaseViewCounter !== 'undefined' && firebaseViewCounter.isInitialized) {
       const popularArticles = <%= raw @popular_articles.pluck(:id).to_json %>;
       
-      // Watch each article for real-time updates
+      // Load initial counts and watch for real-time updates
       popularArticles.forEach(articleId => {
+        // Get initial count from Firebase
+        firebaseViewCounter.getArticleViews(articleId).then(count => {
+          const element = document.getElementById(`view-count-${articleId}`);
+          if (element) {
+            element.textContent = count || 0;
+          }
+        });
+        
+        // Watch for real-time updates
         firebaseViewCounter.watchArticleViews(articleId, (count) => {
           const element = document.getElementById(`view-count-${articleId}`);
-          if (element && parseInt(element.textContent) !== count) {
-            firebaseViewCounter.animateCount(element, count);
+          if (element) {
+            element.textContent = count || 0;
           }
         });
       });
