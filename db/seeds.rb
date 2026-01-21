@@ -8,19 +8,38 @@ Bookmark.destroy_all
 puts "Creating sample articles..."
 
 # General Knowledge Articles
+comprehensive_content = <<~CONTENT
+  📚 Comprehensive Content in Development
+
+  We're meticulously crafting detailed, field-tested content for this section to ensure the highest quality and accuracy for our well intervention professionals.
+  
+  ⏳ What to Expect:
+  • In-depth technical guidelines and procedures
+  • Real-world case studies and best practices
+  • Step-by-step operational instructions
+  • Safety protocols and quality standards
+  • Expert insights from industry veterans
+
+  This content is currently under review by our technical team and subject matter experts to deliver the most valuable and practical information for your field operations.
+  
+  🔔 Stay tuned for updates — quality content takes time, and we're committed to excellence.
+
+  Thank you for your patience as we build the most comprehensive well intervention resource for field professionals.
+CONTENT
+
 general_knowledge_articles = [
-  { title: "Abbreviation", category: "general_knowledge", content: "Common abbreviations used in well intervention operations will be listed here." },
-  { title: "Drilling & Well Intervention Safety", category: "general_knowledge", content: "Safety procedures and protocols for drilling and well intervention operations." },
-  { title: "HSSE Rig Operation", category: "general_knowledge", content: "Health, Safety, Security, and Environment guidelines for rig operations." },
-  { title: "Rig Unit", category: "general_knowledge", content: "Overview of rig unit components and operations." },
-  { title: "Pre-Well Intervention Execution", category: "general_knowledge", content: "Planning and preparation steps before well intervention execution." },
-  { title: "Well Intervention Operation", category: "general_knowledge", content: "Standard operating procedures for well intervention operations." },
-  { title: "Well Problem Handling", category: "general_knowledge", content: "Troubleshooting and problem-solving techniques for well issues." },
-  { title: "Packer", category: "general_knowledge", content: "Types, installation, and operation of packers in well systems." },
-  { title: "Well Head", category: "general_knowledge", content: "Well head components, assembly, and maintenance procedures." },
-  { title: "Well Completion", category: "general_knowledge", content: "Well completion techniques and best practices." },
-  { title: "Artificial Lift", category: "general_knowledge", content: "Various artificial lift methods and their applications." },
-  { title: "Glossary", category: "general_knowledge", content: "Comprehensive glossary of well intervention terminology." }
+  { title: "Abbreviation", category: "general_knowledge", content: comprehensive_content },
+  { title: "Drilling & Well Intervention Safety", category: "general_knowledge", content: comprehensive_content },
+  { title: "HSSE Rig Operation", category: "general_knowledge", content: comprehensive_content },
+  { title: "Rig Unit", category: "general_knowledge", content: comprehensive_content },
+  { title: "Pre-Well Intervention Execution", category: "general_knowledge", content: comprehensive_content },
+  { title: "Well Intervention Operation", category: "general_knowledge", content: comprehensive_content },
+  { title: "Well Problem Handling", category: "general_knowledge", content: comprehensive_content },
+  { title: "Packer", category: "general_knowledge", content: comprehensive_content },
+  { title: "Well Head", category: "general_knowledge", content: comprehensive_content },
+  { title: "Well Completion", category: "general_knowledge", content: comprehensive_content },
+  { title: "Artificial Lift", category: "general_knowledge", content: comprehensive_content },
+  { title: "Glossary", category: "general_knowledge", content: comprehensive_content }
 ]
 
 general_knowledge_articles.each do |article_data|
@@ -35,16 +54,16 @@ end
 
 # Zona Rokan - Rig Hub Articles
 rig_hub_articles = [
-  { title: "Objective", subcategory: "rig_hub", content: "Objectives and goals of the Rig Hub operations in Zona Rokan field." },
-  { title: "Rig Hub Introduction", subcategory: "rig_hub", content: "Introduction to Rig Hub operations, structure, and organization." },
-  { title: "On-Boarding Process", subcategory: "rig_hub", content: "Step-by-step on-boarding process for new personnel joining Rig Hub operations." },
-  { title: "Sumatera Operation Area", subcategory: "rig_hub", content: "Overview of operational areas in Sumatera region for Rig Hub operations." },
-  { title: "Artificial Lift", subcategory: "rig_hub", content: "Artificial lift systems specifically used in Rig Hub operations." },
-  { title: "Heavy Oil Best Practice", subcategory: "rig_hub", content: "Best practices for handling and processing heavy oil in Rig Hub operations." },
-  { title: "Light Oil Best Practice", subcategory: "rig_hub", content: "Best practices for handling and processing light oil in Rig Hub operations." },
-  { title: "Special Operation", subcategory: "rig_hub", content: "Special operational procedures and requirements for unique situations." },
-  { title: "Simultaneous Operations (SIMOPS)", subcategory: "rig_hub", content: "Guidelines and safety protocols for simultaneous operations." },
-  { title: "Appendix", subcategory: "rig_hub", content: "Additional reference materials, forms, and documentation for Rig Hub operations." }
+  { title: "Objective", subcategory: "rig_hub", content: comprehensive_content },
+  { title: "Rig Hub Introduction", subcategory: "rig_hub", content: comprehensive_content },
+  { title: "On-Boarding Process", subcategory: "rig_hub", content: comprehensive_content },
+  { title: "Sumatera Operation Area", subcategory: "rig_hub", content: comprehensive_content },
+  { title: "Artificial Lift", subcategory: "rig_hub", content: comprehensive_content },
+  { title: "Heavy Oil Best Practice", subcategory: "rig_hub", content: comprehensive_content },
+  { title: "Light Oil Best Practice", subcategory: "rig_hub", content: comprehensive_content },
+  { title: "Special Operation", subcategory: "rig_hub", content: comprehensive_content },
+  { title: "Simultaneous Operations (SIMOPS)", subcategory: "rig_hub", content: comprehensive_content },
+  { title: "Appendix", subcategory: "rig_hub", content: comprehensive_content }
 ]
 
 rig_hub_articles.each do |article_data|
