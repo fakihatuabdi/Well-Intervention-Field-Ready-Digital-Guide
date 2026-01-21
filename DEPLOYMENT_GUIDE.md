@@ -37,10 +37,28 @@ git push origin main
 
 4. **Environment Variables**
    Tambahkan environment variables berikut:
+   
+   **Rails Configuration:**
    - `RAILS_ENV`: `production`
    - `SECRET_KEY_BASE`: (akan di-generate otomatis atau gunakan: `rails secret`)
    - `RAILS_LOG_TO_STDOUT`: `true`
    - `RAILS_SERVE_STATIC_FILES`: `true`
+   
+   **Firebase Configuration (PENTING untuk real-time view counter):**
+   - `FIREBASE_API_KEY`: `AIzaSyB2Kx60bD58HQ5JqwbqjYaALzEhHQIPbkw`
+   - `FIREBASE_AUTH_DOMAIN`: `wi-field-ready-digital-guide.firebaseapp.com`
+   - `FIREBASE_DATABASE_URL`: `https://wi-field-ready-digital-guide-default-rtdb.asia-southeast1.firebasedatabase.app`
+   - `FIREBASE_PROJECT_ID`: `wi-field-ready-digital-guide`
+   - `FIREBASE_STORAGE_BUCKET`: `wi-field-ready-digital-guide.firebasestorage.app`
+   - `FIREBASE_MESSAGING_SENDER_ID`: `51623643193`
+   - `FIREBASE_APP_ID`: `1:51623643193:web:6f244103625708e57a25e8`
+
+   **Cara menambahkan di Render:**
+   1. Buka Render Dashboard
+   2. Pilih web service Anda
+   3. Klik tab "Environment"
+   4. Klik "Add Environment Variable" untuk setiap variabel di atas
+   5. Atau gunakan "Add from .env" dan paste semua sekaligus
 
    **PENTING**: Pastikan file `bin/render-build.sh` berisi:
    ```bash
@@ -68,6 +86,21 @@ https://wi-field-guide.onrender.com
 (atau nama yang Anda pilih)
 
 ## Catatan Penting:
+
+### Firebase Tidak Berfungsi di Render?
+Jika Firebase menampilkan error "Firebase initialization timeout" atau "credentials not configured":
+
+**Solusi:**
+1. Pastikan SEMUA environment variables Firebase sudah ditambahkan di Render (lihat Step 2.4)
+2. Redeploy aplikasi setelah menambahkan environment variables:
+   - Buka Render Dashboard → pilih service → klik "Manual Deploy" → "Clear build cache & deploy"
+3. Check logs untuk memastikan Firebase initialized successfully
+4. Lihat browser console (F12) - seharusnya ada log: "🔥 Firebase initialized successfully!"
+
+**Verifikasi:**
+- Di browser console (F12), cek apakah ada error Firebase
+- Seharusnya muncul: "✅ Firebase initialized successfully"
+- Seharusnya muncul: "✅ Article X synced to Firebase: Y views"
 
 ### Data Tidak Muncul Setelah Deploy?
 Jika setelah deploy artikel dan konten tidak muncul:
