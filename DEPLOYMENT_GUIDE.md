@@ -42,6 +42,18 @@ git push origin main
    - `RAILS_LOG_TO_STDOUT`: `true`
    - `RAILS_SERVE_STATIC_FILES`: `true`
 
+   **PENTING**: Pastikan file `bin/render-build.sh` berisi:
+   ```bash
+   #!/usr/bin/env bash
+   set -o errexit
+   
+   bundle install
+   bundle exec rake assets:precompile
+   bundle exec rake assets:clean
+   bundle exec rake db:migrate
+   bundle exec rake db:seed  # ← PENTING: Untuk mengisi data awal
+   ```
+
 5. **Deploy**
    - Klik "Create Web Service"
    - Render akan otomatis build dan deploy aplikasi
@@ -56,6 +68,16 @@ https://wi-field-guide.onrender.com
 (atau nama yang Anda pilih)
 
 ## Catatan Penting:
+
+### Data Tidak Muncul Setelah Deploy?
+Jika setelah deploy artikel dan konten tidak muncul:
+1. Pastikan `bin/render-build.sh` menjalankan `rake db:seed`
+2. Check logs di Render dashboard untuk memastikan seeds berhasil dijalankan
+3. Jika perlu manual seed, gunakan Render Shell:
+   - Buka dashboard Render
+   - Pilih web service Anda
+   - Klik "Shell" tab
+   - Jalankan: `bundle exec rake db:seed`
 
 ### Free Plan Render.com
 - Aplikasi akan sleep setelah 15 menit tidak ada aktivitas
