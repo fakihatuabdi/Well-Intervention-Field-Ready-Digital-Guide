@@ -5,7 +5,7 @@
       back_path = case @article.category
                   when 'general_knowledge'
                     handbook_general_knowledge_path
-                  when 'wk_rokan'
+                  when 'zona_rokan'
                     handbook_rig_hub_path
                   else
                     handbook_path
@@ -13,7 +13,7 @@
       back_label = case @article.category
                    when 'general_knowledge'
                      'Back to General Knowledge'
-                   when 'wk_rokan'
+                   when 'zona_rokan'
                      'Back to Rig Hub'
                    else
                      'Back to Handbook'
@@ -41,7 +41,7 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
         </svg>
-        <span id="view-count-<%= @article.id %>">0</span> views
+        <span id="view-count-<%= @article.id %>"><%= @article.view_count %></span> views
       </span>
     </div>
   </div>
@@ -61,69 +61,70 @@
 </div>
 
 <script>
-  document.addEventListener('turbo:load', function() {
+  // Fungsi untuk auto-sync Firebase
+  async function autoSyncFirebase() {
     const articleId = <%= @article.id %>;
-    const pageLoadId = 'article_' + articleId + '_' + Date.now();
     
-    // Prevent duplicate execution on same page load
-    if (window[pageLoadId]) {
-      console.log('📌 Counter already running for this page load');
-      return;
-    }
-    window[pageLoadId] = true;
+    console.log('🔍 Article page loaded - ID:', articleId);
     
-    function initializeArticleViewCounter() {
-      if (typeof firebaseViewCounter === 'undefined') {
-        console.log('⏳ Waiting for firebaseViewCounter...');
-        setTimeout(initializeArticleViewCounter, 300);
-        return;
-      }
+    try {
+      // Fetch latest count from server
+      const response = await fetch(`/articles/${articleId}/sync_firebase`);
+      const data = await response.json();
       
-      if (!firebaseViewCounter.isInitialized) {
-        console.log('⏳ Waiting for Firebase initialization...');
-        setTimeout(initializeArticleViewCounter, 300);
-        return;
-      }
-      
-      console.log('🔵 Initializing counter for article', articleId);
-      
-      // Get current count and display
-      firebaseViewCounter.getArticleViews(articleId)
-        .then(count => {
-          console.log('📊 Current count:', count);
-          const element = document.getElementById('view-count-<%= @article.id %>');
-          if (element) {
-            element.textContent = count || 0;
+      if (data.success) {
+        const currentViewCount = data.view_count;
+        console.log('📊 Current view count from server:', currentViewCount);
+        
+        // Wait for Firebase to be ready (with faster retry)
+        let retries = 0;
+        const maxRetries = 100; // 10 seconds max
+        
+        const syncWhenReady = () => {
+          if (typeof window.firebaseViewCounter !== 'undefined' && window.firebaseViewCounter.isInitialized) {
+            console.log('✅ Firebase ready, syncing...');
+            window.firebaseViewCounter.syncViewCount(articleId, currentViewCount);
+            
+            // Watch for real-time updates
+            window.firebaseViewCounter.watchArticleViews(articleId, (count) => {
+              const element = document.getElementById('view-count-<%= @article.id %>');
+              if (element && count !== currentViewCount) {
+                element.textContent = count;
+                console.log('🔄 View count updated from Firebase:', count);
+              }
+            });
+            
+            // Cleanup on page unload
+            window.addEventListener('beforeunload', () => {
+              window.firebaseViewCounter.unwatchArticleViews(articleId);
+            });
+          } else if (retries < maxRetries) {
+            retries++;
+            if (retries % 10 === 0) {
+              console.log('⏳ Waiting for Firebase... (attempt', retries, ')');
+            }
+            setTimeout(syncWhenReady, 100);
+          } else {
+            console.warn('⚠️ Firebase initialization timeout');
           }
-          
-          // Increment view
-          console.log('⬆️ Incrementing view for article', articleId);
-          return firebaseViewCounter.incrementArticleView(articleId);
-        })
-        .then(() => {
-          console.log('✅ Article', articleId, 'incremented successfully');
-          // Refresh count after increment
-          return firebaseViewCounter.getArticleViews(articleId);
-        })
-        .then(newCount => {
-          console.log('📈 New count:', newCount);
-          const element = document.getElementById('view-count-<%= @article.id %>');
-          if (element) {
-            element.textContent = newCount || 0;
-          }
-        })
-        .catch(error => console.error('❌ Counter error:', error));
-      
-      // Watch for real-time updates from other users
-      firebaseViewCounter.watchArticleViews(articleId, (count) => {
-        const element = document.getElementById('view-count-<%= @article.id %>');
-        if (element) {
-          element.textContent = count || 0;
-        }
-      });
+        };
+        
+        syncWhenReady();
+      }
+    } catch (error) {
+      console.error('❌ Error auto-syncing Firebase:', error);
     }
-    
-    // Start immediately
-    initializeArticleViewCounter();
-  });
+  }
+  
+  // Jalankan segera saat DOM ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', autoSyncFirebase);
+  } else {
+    // DOM sudah ready, jalankan langsung
+    autoSyncFirebase();
+  }
+  
+  // Untuk Turbo/Hotwire navigation
+  document.addEventListener('turbo:load', autoSyncFirebase);
+  document.addEventListener('turbo:render', autoSyncFirebase);
 </script>

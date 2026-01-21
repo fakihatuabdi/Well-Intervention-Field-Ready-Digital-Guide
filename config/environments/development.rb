@@ -59,6 +59,9 @@ Rails.application.configure do
   # Suppress logger output for asset requests.
   config.assets.quiet = true
 
+  # Devise configuration
+  config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
+
   pf_domain = ENV['GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN']
   config.action_dispatch.default_headers = {
     'X-Frame-Options' => "ALLOW-FROM #{pf_domain}"

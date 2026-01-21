@@ -17,7 +17,7 @@
     
     <% @general_knowledge_articles.each_with_index do |article, index| %>
       <%= link_to article_path(article), class: "block" do %>
-        <div class="bg-white rounded-xl shadow-lg p-6 hover-lift border elegant-border transition-all duration-300 scale-in h-full min-h-[200px] flex flex-col justify-between">
+        <div class="bg-white rounded-xl shadow-lg p-6 hover-lift border elegant-border transition-all duration-300 scale-in h-full min-h-[200px] flex flex-col justify-between" style="animation-delay: <%= index * 0.05 %>s;">
           <div class="flex items-start gap-4">
             <div class="p-3 rounded-lg bg-sky-50 flex-shrink-0">
               <svg class="w-6 h-6 text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -27,13 +27,6 @@
             <div>
               <h3 class="font-bold text-lg text-slate-800 mb-2"><%= article.title %></h3>
               <p class="text-slate-600 text-sm mb-3">Content will be added soon</p>
-              <div class="flex items-center gap-1 text-sm text-slate-500">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                </svg>
-                <span id="view-count-<%= article.id %>">0</span> views
-              </div>
             </div>
           </div>
           <div class="mt-4">
@@ -46,49 +39,3 @@
     <% end %>
   </div>
 </div>
-
-<script data-turbo-eval="false">
-  (function() {
-    let initialized = false;
-    
-    function initializeGeneralKnowledgeCounters() {
-      if (initialized) return;
-      
-      if (typeof firebaseViewCounter === 'undefined' || !firebaseViewCounter.isInitialized) {
-        setTimeout(initializeGeneralKnowledgeCounters, 300);
-        return;
-      }
-      
-      initialized = true;
-      console.log('General Knowledge: Loading view counters');
-      
-      const articleIds = <%= raw @general_knowledge_articles.pluck(:id).to_json %>;
-      
-      articleIds.forEach(articleId => {
-        firebaseViewCounter.getArticleViews(articleId)
-          .then(count => {
-            const element = document.getElementById(`view-count-${articleId}`);
-            if (element) {
-              element.textContent = count || 0;
-            }
-          })
-          .catch(error => console.error(`Error loading count for article ${articleId}:`, error));
-        
-        // Watch for real-time updates
-        firebaseViewCounter.watchArticleViews(articleId, (count) => {
-          const element = document.getElementById(`view-count-${articleId}`);
-          if (element) {
-            element.textContent = count || 0;
-          }
-        });
-      });
-    }
-    
-    // Initialize
-    document.addEventListener('DOMContentLoaded', initializeGeneralKnowledgeCounters);
-    document.addEventListener('turbo:load', function() {
-      initialized = false;
-      initializeGeneralKnowledgeCounters();
-    });
-  })();
-</script>

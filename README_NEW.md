@@ -14,7 +14,7 @@
 - **🏠 Home Dashboard** - Homepage yang eye-catching dengan berbagai sections informatif
 - **📚 Handbook** - Dokumentasi lengkap dengan dua kategori utama:
   - General Knowledge (11 artikel)
-  - WK Rokan Operation (Multiple divisions termasuk Rig Hub)
+  - Zona Rokan Operation (Multiple divisions termasuk Rig Hub)
 - **🔍 Search** - Pencarian artikel yang powerful dengan full-text search
 - **🧮 Calculator** - Tools kalkulasi untuk operasi well intervention (Coming Soon)
 - **🤖 AI Chat Bot** - Asisten AI untuk menjawab pertanyaan seputar handbook (In Development)
@@ -95,7 +95,7 @@ Berisi 11 artikel fundamental:
 - Artificial Lift
 - Glossary
 
-##### WK Rokan Operation
+##### Zona Rokan Operation
 - **Rig Hub** - 10 artikel operasional termasuk:
   - Objective
   - Rig Hub Introduction

@@ -52,6 +52,7 @@ gem "bootsnap", require: false
 gem "pg_search" # For full-text search functionality
 gem "kaminari" # For pagination
 gem "tailwindcss-rails" # For modern styling
+gem "devise" # For user authentication
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
@@ -78,3 +79,5 @@ group :test do
   gem "selenium-webdriver"
   gem "webdrivers"
 end
+
+gem "dotenv-rails", "~> 3.2"

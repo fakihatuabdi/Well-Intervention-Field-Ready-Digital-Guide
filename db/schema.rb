@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_01_15_084703) do
+ActiveRecord::Schema[7.1].define(version: 2026_01_21_014958) do
   create_table "articles", force: :cascade do |t|
     t.string "title"
     t.string "category"
@@ -43,6 +43,18 @@ ActiveRecord::Schema[7.1].define(version: 2026_01_15_084703) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "chat_messages", force: :cascade do |t|
+    t.integer "user_id"
+    t.text "message", null: false
+    t.string "role", null: false
+    t.string "session_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["role"], name: "index_chat_messages_on_role"
+    t.index ["session_id"], name: "index_chat_messages_on_session_id"
+    t.index ["user_id"], name: "index_chat_messages_on_user_id"
+  end
+
   create_table "updates", force: :cascade do |t|
     t.string "title"
     t.text "content"
@@ -52,4 +64,17 @@ ActiveRecord::Schema[7.1].define(version: 2026_01_15_084703) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "users", force: :cascade do |t|
+    t.string "email", default: "", null: false
+    t.string "encrypted_password", default: "", null: false
+    t.string "reset_password_token"
+    t.datetime "reset_password_sent_at"
+    t.datetime "remember_created_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+  end
+
+  add_foreign_key "chat_messages", "users"
 end

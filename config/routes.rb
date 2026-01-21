@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  devise_for :users
   root 'home#index'
   
   # Home
@@ -11,10 +12,11 @@ Rails.application.routes.draw do
   get 'handbook/rig_hub', to: 'handbook#rig_hub'
   
   # Articles
-  resources :articles, only: [:show] do
+  resources :articles, only: [:index, :show] do
     member do
       post :increment_view
       post :bookmark
+      get :sync_firebase
     end
   end
   

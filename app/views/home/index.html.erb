@@ -16,10 +16,10 @@
           }
         }
       </style>
-      <p class="text-lg text-sky-100 mb-6">
+      <p class="text-lg text-sky-100 mb-6 slide-in" style="animation-delay: 0.1s;">
         Comprehensive Digital Companion for Upstream Oil & Gas Operations
       </p>
-      <div class="flex flex-wrap gap-4">
+      <div class="flex flex-wrap gap-4 slide-in" style="animation-delay: 0.2s;">
         <%= link_to "Explore Handbook", handbook_path, class: "bg-white text-sky-700 px-6 py-3 rounded-lg font-semibold hover:bg-sky-50 transition-all duration-300 inline-block shadow-lg hover:shadow-xl" %>
         <%= link_to "Search Articles", search_path, class: "bg-sky-700/50 hover:bg-sky-700/70 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 inline-block backdrop-blur-sm" %>
       </div>
@@ -27,7 +27,7 @@
   </div>
 
   <!-- Case Studies / Lessons Learned -->
-  <div class="mb-12 fade-in">
+  <div class="mb-12 fade-in" style="animation-delay: 0.2s;">
     <div class="flex items-center justify-between mb-6">
       <h2 class="text-2xl font-bold text-slate-800 flex items-center gap-2">
         <svg class="w-6 h-6 text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -63,7 +63,7 @@
   </div>
 
   <!-- Popular Handbook Articles -->
-  <div class="mb-12 bg-white rounded-2xl shadow-lg p-6 lg:p-8 hover-lift fade-in elegant-border">
+  <div class="mb-12 bg-white rounded-2xl shadow-lg p-6 lg:p-8 hover-lift fade-in elegant-border" style="animation-delay: 0.3s;">
     <div class="flex items-center justify-between mb-6">
       <h2 class="text-2xl font-bold text-slate-800 flex items-center gap-2">
         <svg class="w-6 h-6 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -74,10 +74,10 @@
       </h2>
     </div>
     
-    <div id="popular-articles-container" class="space-y-3">
+    <div class="space-y-3">
       <% if @popular_articles.any? %>
         <% @popular_articles.each do |article| %>
-          <%= link_to article_path(article), class: "article-card block p-4 bg-gradient-to-r from-slate-50 to-sky-50/30 rounded-lg hover:shadow-lg transition-all duration-300 border elegant-border scale-in", data: { article_id: article.id } do %>
+          <%= link_to article_path(article), class: "block p-4 bg-gradient-to-r from-slate-50 to-sky-50/30 rounded-lg hover:shadow-lg transition-all duration-300 border elegant-border scale-in" do %>
             <h4 class="font-semibold text-slate-800 mb-2"><%= article.title %></h4>
             <div class="flex items-center gap-4 text-sm text-slate-600">
               <span class="flex items-center gap-1">
@@ -85,9 +85,15 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                 </svg>
-                <span id="view-count-<%= article.id %>" class="font-medium text-sky-700">0</span> views
+                <span id="view-count-<%= article.id %>" class="font-medium text-sky-700"><%= article.view_count %></span> views
               </span>
-              <span class="text-slate-400 capitalize"><%= article.category.gsub('_', ' ') %></span>
+              <span class="text-slate-400 capitalize">
+                <% if article.subcategory.present? %>
+                  <%= article.subcategory.gsub('_', ' ').titleize %>
+                <% else %>
+                  <%= article.category.gsub('_', ' ').titleize %>
+                <% end %>
+              </span>
             </div>
           <% end %>
         <% end %>
@@ -100,7 +106,7 @@
   </div>
 
   <!-- Updates & Notices -->
-  <div class="glass-effect rounded-2xl p-6 lg:p-8 shadow-lg fade-in hover-lift elegant-border">
+  <div class="glass-effect rounded-2xl p-6 lg:p-8 shadow-lg fade-in hover-lift elegant-border" style="animation-delay: 0.4s;">
     <h3 class="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-2">
       <svg class="w-6 h-6 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path>
@@ -131,95 +137,29 @@
   </div>
 </div>
 
-<!-- Firebase Integration -->
-<script data-turbo-eval="false">
-  let homeInitialized = false;
-  
-  function initializeHomeViewCounter() {
-    if (homeInitialized) return;
-    
-    if (typeof firebaseViewCounter === 'undefined') {
-      setTimeout(initializeHomeViewCounter, 300);
-      return;
-    }
-    
-    if (!firebaseViewCounter.isInitialized) {
-      setTimeout(initializeHomeViewCounter, 300);
-      return;
-    }
-    
-    homeInitialized = true;
-    console.log('Home: Initializing view counters');
-    
-    const popularArticles = <%= raw @popular_articles.pluck(:id).to_json %>;
-    const articleCounts = {};
-    let loadedCount = 0;
-    
-    // Load counts for all articles
-    popularArticles.forEach(articleId => {
-      firebaseViewCounter.getArticleViews(articleId)
-        .then(count => {
-          articleCounts[articleId] = count || 0;
-          
-          // Update display
-          const element = document.getElementById(`view-count-${articleId}`);
-          if (element) {
-            element.textContent = count || 0;
-          }
-          
-          loadedCount++;
-          
-          // Sort after all loaded
-          if (loadedCount === popularArticles.length) {
-            sortPopularArticles(articleCounts);
-          }
-        })
-        .catch(error => console.error(`Error loading count for article ${articleId}:`, error));
+<!-- Firebase Integration Placeholder -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Initialize real-time view counter for popular articles
+    if (typeof firebaseViewCounter !== 'undefined' && firebaseViewCounter.isInitialized) {
+      const popularArticles = <%= raw @popular_articles.pluck(:id).to_json %>;
       
-      // Watch for real-time updates
-      firebaseViewCounter.watchArticleViews(articleId, (count) => {
-        articleCounts[articleId] = count || 0;
-        const element = document.getElementById(`view-count-${articleId}`);
-        if (element) {
-          element.textContent = count || 0;
-        }
-        // Re-sort immediately when any count updates
-        sortPopularArticles(articleCounts);
+      // Watch each article for real-time updates
+      popularArticles.forEach(articleId => {
+        firebaseViewCounter.watchArticleViews(articleId, (count) => {
+          const element = document.getElementById(`view-count-${articleId}`);
+          if (element && parseInt(element.textContent) !== count) {
+            firebaseViewCounter.animateCount(element, count);
+          }
+        });
       });
-    });
-  }
-  
-  // Sort and display top 5 popular articles
-  function sortPopularArticles(counts) {
-    const container = document.getElementById('popular-articles-container');
-    if (!container) return;
-    
-    const cards = Array.from(container.querySelectorAll('.article-card'));
-    if (cards.length === 0) return;
-    
-    // Sort by view count descending
-    cards.sort((a, b) => {
-      const idA = parseInt(a.dataset.articleId);
-      const idB = parseInt(b.dataset.articleId);
-      const countA = counts[idA] || 0;
-      const countB = counts[idB] || 0;
-      return countB - countA;
-    });
-    
-    // Clear container
-    container.innerHTML = '';
-    
-    // Show only top 5
-    cards.slice(0, 5).forEach(card => {
-      card.style.display = 'block';
-      container.appendChild(card);
-    });
-  }
-  
-  // Initialize on load
-  document.addEventListener('DOMContentLoaded', initializeHomeViewCounter);
-  document.addEventListener('turbo:load', function() {
-    homeInitialized = false;
-    initializeHomeViewCounter();
+      
+      // Cleanup on page unload
+      window.addEventListener('beforeunload', () => {
+        popularArticles.forEach(articleId => {
+          firebaseViewCounter.unwatchArticleViews(articleId);
+        });
+      });
+    }
   });
 </script>

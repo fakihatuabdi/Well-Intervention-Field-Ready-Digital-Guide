@@ -7,14 +7,32 @@ class FirebaseViewCounter {
     if (typeof firebase !== 'undefined' && firebase.database) {
       this.database = firebase.database();
       this.isInitialized = true;
-      console.log('FirebaseViewCounter: Database connected');
+      console.log('✅ Firebase initialized successfully');
     } else {
       console.warn('Firebase not initialized. View counting will use fallback mode.');
       this.isInitialized = false;
     }
   }
 
-  // Increment view count untuk artikel
+  // Sync view count from Rails to Firebase (for auto-sync)
+  async syncViewCount(articleId, currentViewCount) {
+    if (!this.isInitialized) {
+      console.log('Firebase not available, skipping sync');
+      return;
+    }
+
+    const viewRef = this.database.ref(`article_views/${articleId}`);
+    
+    try {
+      // Set the current view count from Rails to Firebase
+      await viewRef.set(currentViewCount);
+      console.log(`✅ Article ${articleId} synced to Firebase: ${currentViewCount} views`);
+    } catch (error) {
+      console.error('❌ Error syncing to Firebase:', error);
+    }
+  }
+
+  // Increment view count untuk artikel (legacy method, not used anymore)
   async incrementArticleView(articleId) {
     if (!this.isInitialized) {
       console.log('Firebase not available, using Rails backend for view count');
@@ -27,25 +45,35 @@ class FirebaseViewCounter {
       await viewRef.transaction((currentViews) => {
         return (currentViews || 0) + 1;
       });
-      console.log(`✅ Article ${articleId} view incremented via Firebase`);
-      return true;
+      console.log(`Article ${articleId} view incremented via Firebase`);
     } catch (error) {
-      console.error('❌ Error incrementing view:', error);
+      console.error('Error incrementing view:', error);
       // Fallback to Rails
-      return this.incrementViaRails(articleId);
+      this.incrementViaRails(articleId);
     }
   }
 
   // Fallback: increment via Rails AJAX
   incrementViaRails(articleId) {
+    const csrfToken = document.querySelector('[name="csrf-token"]');
+    if (!csrfToken) {
+      console.error('CSRF token not found');
+      return;
+    }
+    
     fetch(`/articles/${articleId}/increment_view`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-CSRF-Token': document.querySelector('[name="csrf-token"]').content
+        'X-CSRF-Token': csrfToken.content
       }
     })
-    .then(response => response.json())
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return response.json();
+    })
     .then(data => {
       console.log('View count updated via Rails:', data.view_count);
     })
@@ -113,13 +141,16 @@ class FirebaseViewCounter {
   }
 }
 
-// Make class globally available
-window.FirebaseViewCounter = FirebaseViewCounter;
+// Initialize global instance
+let firebaseViewCounter;
 
-// Initialize global instance when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
-  if (!window.firebaseViewCounter) {
-    window.firebaseViewCounter = new FirebaseViewCounter();
-    console.log('Firebase View Counter initialized from firebase_analytics.js');
-  }
+  firebaseViewCounter = new FirebaseViewCounter();
+  window.firebaseViewCounter = firebaseViewCounter;
+  console.log('🔥 Firebase View Counter initialized', firebaseViewCounter.isInitialized ? 'with Firebase' : 'in fallback mode');
 });
+
+// Also make it available globally immediately
+if (typeof window !== 'undefined') {
+  window.FirebaseViewCounter = FirebaseViewCounter;
+}

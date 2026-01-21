@@ -23,15 +23,16 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
     
     <script>
-      // Firebase Configuration
+      // Firebase Configuration (from ENV)
+      <% if ENV['FIREBASE_API_KEY'].present? %>
       const firebaseConfig = {
-        apiKey: "AIzaSyB2Kx60bD58HQ5JqwbqjYaALzEhHQIPbkw",
-        authDomain: "wi-field-ready-digital-guide.firebaseapp.com",
-        databaseURL: "https://wi-field-ready-digital-guide-default-rtdb.asia-southeast1.firebasedatabase.app",
-        projectId: "wi-field-ready-digital-guide",
-        storageBucket: "wi-field-ready-digital-guide.firebasestorage.app",
-        messagingSenderId: "51623643193",
-        appId: "1:51623643193:web:6f244103625708e57a25e8"
+        apiKey: "<%= ENV['FIREBASE_API_KEY'] %>",
+        authDomain: "<%= ENV['FIREBASE_AUTH_DOMAIN'] %>",
+        databaseURL: "<%= ENV['FIREBASE_DATABASE_URL'] %>",
+        projectId: "<%= ENV['FIREBASE_PROJECT_ID'] %>",
+        storageBucket: "<%= ENV['FIREBASE_STORAGE_BUCKET'] %>",
+        messagingSenderId: "<%= ENV['FIREBASE_MESSAGING_SENDER_ID'] %>",
+        appId: "<%= ENV['FIREBASE_APP_ID'] %>"
       };
 
       // Initialize Firebase
@@ -39,64 +40,9 @@
         firebase.initializeApp(firebaseConfig);
         console.log('🔥 Firebase initialized successfully!');
       }
-      
-      // FirebaseViewCounter class - defined globally
-      class FirebaseViewCounter {
-        constructor() {
-          if (typeof firebase !== 'undefined' && firebase.database) {
-            this.database = firebase.database();
-            this.isInitialized = true;
-            console.log('✅ FirebaseViewCounter: Database connected');
-          } else {
-            console.warn('⚠️ Firebase not initialized');
-            this.isInitialized = false;
-          }
-        }
-        
-        async incrementArticleView(articleId) {
-          if (!this.isInitialized) {
-            console.warn('Firebase not initialized, cannot increment view');
-            return false;
-          }
-          
-          try {
-            const viewRef = this.database.ref(`article_views/${articleId}`);
-            await viewRef.transaction((currentValue) => {
-              return (currentValue || 0) + 1;
-            });
-            console.log(`✅ Article ${articleId} view incremented via Firebase`);
-            return true;
-          } catch (error) {
-            console.error('❌ Error incrementing view:', error);
-            return false;
-          }
-        }
-        
-        async getArticleViews(articleId) {
-          if (!this.isInitialized) return 0;
-          
-          try {
-            const snapshot = await this.database.ref(`article_views/${articleId}`).once('value');
-            return snapshot.val() || 0;
-          } catch (error) {
-            console.error('Error getting views:', error);
-            return 0;
-          }
-        }
-        
-        watchArticleViews(articleId, callback) {
-          if (!this.isInitialized) return;
-          
-          const viewRef = this.database.ref(`article_views/${articleId}`);
-          viewRef.on('value', (snapshot) => {
-            callback(snapshot.val() || 0);
-          });
-        }
-      }
-      
-      // Create global instance
-      window.firebaseViewCounter = new FirebaseViewCounter();
-      console.log('🎯 Global firebaseViewCounter initialized');
+      <% else %>
+      console.warn('⚠️ Firebase credentials not configured. Set ENV variables for Firebase integration.');
+      <% end %>
     </script>
     
     <style>
@@ -104,36 +50,31 @@
         font-family: 'Inter', sans-serif;
       }
       
-      /* Simple fade animation - no flash */
-      @keyframes gentleFade {
-        from { opacity: 0; }
-        to { opacity: 1; }
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(15px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      
+      @keyframes slideIn {
+        from { opacity: 0; transform: translateX(-15px); }
+        to { opacity: 1; transform: translateX(0); }
+      }
+      
+      @keyframes scaleIn {
+        from { opacity: 0; transform: scale(0.95); }
+        to { opacity: 1; transform: scale(1); }
       }
       
       .fade-in {
-        opacity: 0;
-        animation: gentleFade 0.3s ease-out forwards;
+        animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1);
       }
       
       .slide-in {
-        opacity: 0;
-        animation: gentleFade 0.3s ease-out forwards;
+        animation: slideIn 0.7s cubic-bezier(0.4, 0, 0.2, 1);
       }
       
       .scale-in {
-        opacity: 0;
-        animation: gentleFade 0.3s ease-out forwards;
-      }
-      
-      /* Turbo smooth transitions */
-      html.turbo-loading {
-        cursor: wait;
-      }
-      
-      /* Prevent flash on Turbo navigation */
-      body {
-        opacity: 1;
-        transition: none;
+        animation: scaleIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
       }
       
       .hover-lift {
@@ -154,16 +95,47 @@
       .elegant-border {
         border: 1px solid rgba(14, 165, 233, 0.15);
       }
-      
-      /* Turbo progress bar styling */
-      .turbo-progress-bar {
-        height: 3px;
-        background: linear-gradient(to right, #0ea5e9, #06b6d4);
-      }
     </style>
   </head>
 
   <body class="bg-gradient-to-br from-sky-50 via-white to-cyan-50 min-h-screen">
+    <!-- Flash Messages -->
+    <% if notice.present? || alert.present? %>
+      <div id="flash-messages" class="fixed top-4 right-4 z-50 max-w-md">
+        <% if notice.present? %>
+          <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-2 rounded shadow-lg fade-in" role="alert">
+            <div class="flex items-center">
+              <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+              </svg>
+              <p><%= notice %></p>
+            </div>
+          </div>
+        <% end %>
+        <% if alert.present? %>
+          <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-2 rounded shadow-lg fade-in" role="alert">
+            <div class="flex items-center">
+              <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+              </svg>
+              <p><%= alert %></p>
+            </div>
+          </div>
+        <% end %>
+      </div>
+      <script>
+        // Auto-hide flash messages after 5 seconds
+        setTimeout(() => {
+          const flashMessages = document.getElementById('flash-messages');
+          if (flashMessages) {
+            flashMessages.style.opacity = '0';
+            flashMessages.style.transition = 'opacity 0.5s';
+            setTimeout(() => flashMessages.remove(), 500);
+          }
+        }, 5000);
+      </script>
+    <% end %>
+    
     <!-- Mobile Menu Button - Always visible on mobile -->
     <button id="mobile-menu-btn" 
             class="fixed top-4 left-4 z-50 lg:hidden bg-white p-3 rounded-lg shadow-lg hover:bg-slate-50 hover:shadow-xl active:scale-95 transition-all duration-200"
@@ -316,15 +288,6 @@
             document.body.style.overflow = ''; // Restore scrolling
           }
         }
-      });
-      
-      // Smooth Turbo navigation
-      document.addEventListener('turbo:before-visit', function() {
-        document.body.style.opacity = '1';
-      });
-      
-      document.addEventListener('turbo:load', function() {
-        document.body.style.opacity = '1';
       });
     </script>
   </body>

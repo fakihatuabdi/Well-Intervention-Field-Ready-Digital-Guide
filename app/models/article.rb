@@ -29,8 +29,11 @@ class Article < ApplicationRecord
   scope :by_subcategory, ->(subcategory) { where(subcategory: subcategory) }
   scope :popular, -> { order(view_count: :desc).limit(5) }
   
-  def increment_view_count
-    increment!(:view_count)
+  # Thread-safe increment using database-level increment
+  def increment_view_count!
+    # Use update_counters to avoid race conditions
+    self.class.update_counters(id, view_count: 1)
+    reload
   end
   
   private

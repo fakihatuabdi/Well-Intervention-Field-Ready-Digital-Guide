@@ -33,9 +33,9 @@ general_knowledge_articles.each do |article_data|
   )
 end
 
-# WK Rokan - Rig Hub Articles
+# Zona Rokan - Rig Hub Articles
 rig_hub_articles = [
-  { title: "Objective", subcategory: "rig_hub", content: "Objectives and goals of the Rig Hub operations in WK Rokan field." },
+  { title: "Objective", subcategory: "rig_hub", content: "Objectives and goals of the Rig Hub operations in Zona Rokan field." },
   { title: "Rig Hub Introduction", subcategory: "rig_hub", content: "Introduction to Rig Hub operations, structure, and organization." },
   { title: "On-Boarding Process", subcategory: "rig_hub", content: "Step-by-step on-boarding process for new personnel joining Rig Hub operations." },
   { title: "Sumatera Operation Area", subcategory: "rig_hub", content: "Overview of operational areas in Sumatera region for Rig Hub operations." },
@@ -50,7 +50,7 @@ rig_hub_articles = [
 rig_hub_articles.each do |article_data|
   Article.create!(
     title: article_data[:title],
-    category: "wk_rokan",
+    category: "zona_rokan",
     subcategory: article_data[:subcategory],
     content: article_data[:content],
     published: true,
