@@ -48,7 +48,7 @@ general_knowledge_articles.each do |article_data|
     category: article_data[:category],
     content: article_data[:content],
     published: true,
-    view_count: rand(10..500)
+    view_count: 0
   )
 end
 
@@ -73,7 +73,7 @@ rig_hub_articles.each do |article_data|
     subcategory: article_data[:subcategory],
     content: article_data[:content],
     published: true,
-    view_count: rand(10..300)
+    view_count: 0
   )
 end
 
