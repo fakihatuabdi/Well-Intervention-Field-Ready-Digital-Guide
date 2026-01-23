@@ -82,4 +82,7 @@ Rails.application.configure do
   config.hosts << "localhost:3000"
 
   config.action_cable.allowed_request_origins = ["https://#{pf_host}", "http://localhost:3000"]
+  
+  # Allow Codespaces host for CSRF protection
+  config.action_controller.forgery_protection_origin_check = false if ENV['CODESPACE_NAME'].present?
 end

@@ -28,9 +28,25 @@
   </div>
 
   <!-- Article Header -->
-  <div class="bg-white rounded-2xl shadow-lg p-8 mb-6">
-    <h1 class="text-4xl font-bold text-slate-800 mb-3"><%= @article.title %></h1>
+  <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8 mb-6">
+    <!-- Title Row with Bookmark Button -->
+    <div class="flex items-start justify-between gap-4 mb-4">
+      <h1 class="text-3xl md:text-4xl font-bold text-slate-800 flex-1"><%= @article.title %></h1>
+      
+      <!-- Bookmark Button -->
+      <button 
+        id="bookmark-btn"
+        onclick="toggleBookmark()"
+        data-article-id="<%= @article.id %>"
+        class="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-sky-500 to-cyan-600 hover:from-sky-600 hover:to-cyan-700 text-white font-semibold text-sm rounded-lg transition-all duration-300 shadow-md hover:shadow-lg hover:scale-105 active:scale-95 flex-shrink-0">
+        <svg id="bookmark-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path>
+        </svg>
+        <span id="bookmark-text">Bookmark</span>
+      </button>
+    </div>
     
+    <!-- Meta Information -->
     <div class="flex flex-wrap items-center gap-3">
       <span class="px-3 py-1 bg-gradient-to-r from-sky-100 to-cyan-100 text-sky-700 rounded-full text-sm font-medium">
         <%= @article.category.gsub('_', ' ').titleize %>
@@ -61,70 +77,242 @@
 </div>
 
 <script>
-  // Fungsi untuk auto-sync Firebase
-  async function autoSyncFirebase() {
-    const articleId = <%= @article.id %>;
+  // Article page initialization with Turbo support
+  (function() {
+    // State management - use unique keys to avoid conflicts
+    const stateKey = `article_${<%= @article.id %>}_state`;
     
-    console.log('🔍 Article page loaded - ID:', articleId);
+    // Clean up any existing state
+    function cleanup() {
+      const state = window[stateKey];
+      if (state) {
+        if (state.firebaseSyncInterval) {
+          clearInterval(state.firebaseSyncInterval);
+        }
+        if (state.firebaseWatcherActive && typeof window.firebaseViewCounter !== 'undefined') {
+          window.firebaseViewCounter.unwatchArticleViews(<%= @article.id %>);
+        }
+        delete window[stateKey];
+      }
+    }
+    
+    // Initialize page
+    function initialize() {
+      // Cleanup first
+      cleanup();
+      
+      // Create new state
+      window[stateKey] = {
+        firebaseSyncInterval: null,
+        firebaseWatcherActive: false
+      };
+      
+      const articleId = <%= @article.id %>;
+      const state = window[stateKey];
+      
+      // Auto-sync Firebase
+      async function autoSyncFirebase() {
+        console.log('🔍 Article page loaded - ID:', articleId);
+        
+        try {
+          const response = await fetch(`/articles/${articleId}/sync_firebase`);
+          const data = await response.json();
+          
+          if (data.success) {
+            const currentViewCount = data.view_count;
+            console.log('📊 Current view count from server:', currentViewCount);
+            
+            let retries = 0;
+            const maxRetries = 50;
+            
+            const syncWhenReady = () => {
+              if (typeof window.firebaseViewCounter !== 'undefined' && window.firebaseViewCounter.isInitialized) {
+                console.log('✅ Firebase ready, syncing...');
+                window.firebaseViewCounter.syncViewCount(articleId, currentViewCount);
+                
+                if (!state.firebaseWatcherActive) {
+                  state.firebaseWatcherActive = true;
+                  window.firebaseViewCounter.watchArticleViews(articleId, (count) => {
+                    const element = document.getElementById('view-count-<%= @article.id %>');
+                    if (element && count !== currentViewCount) {
+                      element.textContent = count;
+                      console.log('🔄 View count updated from Firebase:', count);
+                    }
+                  });
+                }
+              } else if (retries < maxRetries) {
+                retries++;
+                if (retries % 10 === 0) {
+                  console.log('⏳ Waiting for Firebase... (attempt', retries, ')');
+                }
+                setTimeout(syncWhenReady, 100);
+              } else {
+                console.warn('⚠️ Firebase initialization timeout');
+              }
+            };
+            
+            syncWhenReady();
+          }
+        } catch (error) {
+          console.error('❌ Error auto-syncing Firebase:', error);
+        }
+      }
+      
+      autoSyncFirebase();
+    }
+    
+    // Only run if we're on the page (not in cache)
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initialize, { once: true });
+    } else {
+      initialize();
+    }
+    
+    // Cleanup before Turbo cache
+    document.addEventListener('turbo:before-cache', cleanup, { once: true });
+  })();
+  
+  // Bookmark functionality (scoped in IIFE)
+  (function() {
+    let isBookmarked = false;
+    
+    window.toggleBookmark = async function() {
+      const bookmarkBtn = document.getElementById('bookmark-btn');
+      const bookmarkIcon = document.getElementById('bookmark-icon');
+      const bookmarkText = document.getElementById('bookmark-text');
+      const articleId = bookmarkBtn.getAttribute('data-article-id');
+      const csrfToken = document.querySelector('meta[name="csrf-token"]');
+    
+    if (!csrfToken) {
+      showFlashMessage('error', 'Security token not found. Please refresh the page.');
+      return;
+    }
+    
+    // Disable button during request (without changing opacity)
+    bookmarkBtn.disabled = true;
+    const originalText = bookmarkText.textContent;
+    bookmarkText.textContent = 'Loading...';
     
     try {
-      // Fetch latest count from server
-      const response = await fetch(`/articles/${articleId}/sync_firebase`);
-      const data = await response.json();
+      const scrollPosition = window.scrollY || window.pageYOffset;
       
-      if (data.success) {
-        const currentViewCount = data.view_count;
-        console.log('📊 Current view count from server:', currentViewCount);
-        
-        // Wait for Firebase to be ready (with faster retry)
-        let retries = 0;
-        const maxRetries = 100; // 10 seconds max
-        
-        const syncWhenReady = () => {
-          if (typeof window.firebaseViewCounter !== 'undefined' && window.firebaseViewCounter.isInitialized) {
-            console.log('✅ Firebase ready, syncing...');
-            window.firebaseViewCounter.syncViewCount(articleId, currentViewCount);
-            
-            // Watch for real-time updates
-            window.firebaseViewCounter.watchArticleViews(articleId, (count) => {
-              const element = document.getElementById('view-count-<%= @article.id %>');
-              if (element && count !== currentViewCount) {
-                element.textContent = count;
-                console.log('🔄 View count updated from Firebase:', count);
-              }
-            });
-            
-            // Cleanup on page unload
-            window.addEventListener('beforeunload', () => {
-              window.firebaseViewCounter.unwatchArticleViews(articleId);
-            });
-          } else if (retries < maxRetries) {
-            retries++;
-            if (retries % 10 === 0) {
-              console.log('⏳ Waiting for Firebase... (attempt', retries, ')');
-            }
-            setTimeout(syncWhenReady, 100);
-          } else {
-            console.warn('⚠️ Firebase initialization timeout');
+      if (isBookmarked) {
+        // Remove bookmark
+        const response = await fetch(`/articles/${articleId}/unbookmark`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': csrfToken.content
           }
-        };
+        });
         
-        syncWhenReady();
+        const data = await response.json();
+        
+        if (data.success) {
+          isBookmarked = false;
+          
+          // Update button to "not bookmarked" state (blue)
+          bookmarkIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path>';
+          bookmarkIcon.setAttribute('fill', 'none');
+          bookmarkText.textContent = 'Bookmark';
+          
+          // Set blue color with inline style to ensure it applies
+          bookmarkBtn.setAttribute('class', 'flex items-center gap-2 px-4 py-2 text-white font-semibold text-sm rounded-lg transition-all duration-300 shadow-md hover:shadow-lg hover:scale-105 active:scale-95 flex-shrink-0');
+          bookmarkBtn.style.background = 'linear-gradient(to right, rgb(14 165 233), rgb(8 145 178))';
+          
+          console.log('✓ Unbookmarked - Button is now BLUE');
+          
+          if (window.notificationManager) {
+            window.notificationManager.show('success', data.message || 'Bookmark removed!');
+          }
+        } else {
+          throw new Error(data.message || 'Failed to remove bookmark');
+        }
+      } else {
+        // Add bookmark
+        const response = await fetch(`/articles/${articleId}/bookmark`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': csrfToken.content
+          },
+          body: JSON.stringify({
+            position: scrollPosition
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          isBookmarked = true;
+          
+          // Update button to "bookmarked" state (red for unbookmark)
+          bookmarkIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" fill="currentColor"></path>';
+          bookmarkText.textContent = 'Unbookmark';
+          
+          // Set red color with inline style to ensure it applies
+          bookmarkBtn.setAttribute('class', 'flex items-center gap-2 px-4 py-2 text-white font-semibold text-sm rounded-lg transition-all duration-300 shadow-md hover:shadow-lg hover:scale-105 active:scale-95 flex-shrink-0');
+          bookmarkBtn.style.background = 'linear-gradient(to right, rgb(239 68 68), rgb(220 38 38))';
+          
+          console.log('✓ Bookmarked - Button is now RED');
+          console.log('Background:', bookmarkBtn.style.background);
+          console.log('Computed background:', window.getComputedStyle(bookmarkBtn).background);
+          
+          if (window.notificationManager) {
+            window.notificationManager.show('success', data.message || 'Article bookmarked!');
+          }
+        } else {
+          throw new Error(data.message || 'Failed to bookmark article');
+        }
       }
+      
+      // Re-enable button
+      bookmarkBtn.disabled = false;
+      
     } catch (error) {
-      console.error('❌ Error auto-syncing Firebase:', error);
+      console.error('Error toggling bookmark:', error);
+      if (window.notificationManager) {
+        window.notificationManager.show('error', error.message || 'An error occurred. Please try again.');
+      }
+      
+      // Reset button
+      bookmarkBtn.disabled = false;
+      bookmarkText.textContent = originalText;
     }
   }
   
-  // Jalankan segera saat DOM ready
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', autoSyncFirebase);
-  } else {
-    // DOM sudah ready, jalankan langsung
-    autoSyncFirebase();
+  // Check bookmark status on page load
+  async function checkBookmarkStatus() {
+    const bookmarkBtn = document.getElementById('bookmark-btn');
+    if (!bookmarkBtn) return;
+    
+    const bookmarkIcon = document.getElementById('bookmark-icon');
+    const bookmarkText = document.getElementById('bookmark-text');
+    const articleId = bookmarkBtn.getAttribute('data-article-id');
+    
+    try {
+      const response = await fetch(`/articles/${articleId}/check_bookmark`);
+      const data = await response.json();
+      
+      if (data.bookmarked) {
+        isBookmarked = true;
+        
+        // Update button to "bookmarked" state (red for unbookmark)
+        bookmarkIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" fill="currentColor"></path>';
+        bookmarkText.textContent = 'Unbookmark';
+        
+        // Set red color with inline style
+        bookmarkBtn.setAttribute('class', 'flex items-center gap-2 px-4 py-2 text-white font-semibold text-sm rounded-lg transition-all duration-300 shadow-md hover:shadow-lg hover:scale-105 active:scale-95 flex-shrink-0');
+        bookmarkBtn.style.background = 'linear-gradient(to right, rgb(239 68 68), rgb(220 38 38))';
+        
+        console.log('✓ Initial load - Article already bookmarked, button is RED');
+      }
+    } catch (error) {
+      console.error('Error checking bookmark status:', error);
+    }
   }
   
-  // Untuk Turbo/Hotwire navigation
-  document.addEventListener('turbo:load', autoSyncFirebase);
-  document.addEventListener('turbo:render', autoSyncFirebase);
+  // Initialize bookmark status when page loads
+  checkBookmarkStatus();
+})();
 </script>

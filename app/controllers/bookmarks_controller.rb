@@ -14,11 +14,28 @@ class BookmarksController < ApplicationController
 
   def destroy
     bookmark = Bookmark.find(params[:id])
-    bookmark.destroy
-    redirect_to bookmarks_path, notice: 'Bookmark removed successfully'
+    
+    respond_to do |format|
+      if bookmark.destroy
+        format.html { redirect_to bookmarks_path, notice: 'Bookmark removed successfully' }
+        format.json { render json: { success: true, message: 'Bookmark removed successfully' }, status: :ok }
+      else
+        format.html { redirect_to bookmarks_path, alert: 'Failed to remove bookmark' }
+        format.json { render json: { success: false, message: 'Failed to remove bookmark' }, status: :unprocessable_entity }
+      end
+    end
+  rescue ActiveRecord::RecordNotFound => e
+    Rails.logger.error "Bookmark not found: #{e.message}"
+    respond_to do |format|
+      format.html { redirect_to bookmarks_path, alert: 'Bookmark not found' }
+      format.json { render json: { success: false, message: 'Bookmark not found' }, status: :not_found }
+    end
   rescue => e
     Rails.logger.error "Error destroying bookmark: #{e.message}"
-    redirect_to bookmarks_path, alert: 'Failed to remove bookmark'
+    respond_to do |format|
+      format.html { redirect_to bookmarks_path, alert: 'Failed to remove bookmark' }
+      format.json { render json: { success: false, message: 'Failed to remove bookmark' }, status: :internal_server_error }
+    end
   end
   
   private

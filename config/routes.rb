@@ -16,12 +16,15 @@ Rails.application.routes.draw do
     member do
       post :increment_view
       post :bookmark
+      delete :unbookmark
       get :sync_firebase
+      get :check_bookmark
     end
   end
   
   # Search
   get 'search', to: 'search#index'
+  get 'search/suggestions', to: 'search#suggestions'
   
   # Calculator
   get 'calculator', to: 'calculator#index'

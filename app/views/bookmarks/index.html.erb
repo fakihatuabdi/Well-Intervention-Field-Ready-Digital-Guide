@@ -5,9 +5,9 @@
   </div>
 
   <% if @bookmarks.any? %>
-    <div class="space-y-4">
+    <div class="space-y-4" id="bookmarks-container">
       <% @bookmarks.each do |bookmark| %>
-        <div class="bg-white rounded-xl shadow-md p-6 hover-lift border border-slate-100 transition-all duration-300">
+        <div class="bg-white rounded-xl shadow-md p-6 hover-lift border border-slate-100 transition-all duration-300" id="bookmark-<%= bookmark.id %>" data-bookmark-id="<%= bookmark.id %>">
           <div class="flex items-start justify-between gap-4">
             <div class="flex-1">
               <%= link_to article_path(bookmark.article), class: "block" do %>
@@ -45,14 +45,13 @@
                 Continue Reading
               <% end %>
               
-              <%= button_to bookmark_path(bookmark), 
-                  method: :delete, 
-                  data: { confirm: 'Remove this bookmark?' },
-                  class: "px-4 py-2 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg text-sm font-medium transition-all duration-200" do %>
+              <button 
+                onclick="removeBookmark(<%= bookmark.id %>, this)"
+                class="px-4 py-2 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg text-sm font-medium transition-all duration-200">
                 <svg class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                 </svg>
-              <% end %>
+              </button>
             </div>
           </div>
         </div>
@@ -72,3 +71,70 @@
     </div>
   <% end %>
 </div>
+
+<script>
+  // Bookmark page with proper Turbo support
+  (function() {
+    // Only define removeBookmark once
+    if (!window.removeBookmark) {
+      window.removeBookmark = async function(bookmarkId, button) {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]');
+        const bookmarkCard = document.getElementById(`bookmark-${bookmarkId}`);
+        
+        if (!csrfToken) {
+          if (window.notificationManager) {
+            window.notificationManager.show('error', 'Security token not found. Please refresh the page.');
+          }
+          return;
+        }
+        
+        try {
+          button.disabled = true;
+          button.style.opacity = '0.5';
+          
+          const response = await fetch(`/bookmarks/${bookmarkId}`, {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRF-Token': csrfToken.content,
+              'Accept': 'application/json'
+            }
+          });
+          
+          const data = await response.json();
+          
+          if (response.ok && data.success) {
+            bookmarkCard.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
+            bookmarkCard.style.opacity = '0';
+            bookmarkCard.style.transform = 'scale(0.95)';
+            
+            setTimeout(() => {
+              bookmarkCard.remove();
+              
+              const container = document.getElementById('bookmarks-container');
+              const remainingBookmarks = container ? container.querySelectorAll('[data-bookmark-id]').length : 0;
+              
+              if (remainingBookmarks === 0) {
+                window.location.reload();
+              }
+            }, 200);
+            
+            if (window.notificationManager) {
+              window.notificationManager.show('success', data.message || 'Bookmark removed successfully');
+            }
+          } else {
+            throw new Error(data.message || 'Failed to remove bookmark');
+          }
+        } catch (error) {
+          console.error('Error removing bookmark:', error);
+          if (window.notificationManager) {
+            window.notificationManager.show('error', error.message || 'Failed to remove bookmark. Please try again.');
+          }
+          
+          button.disabled = false;
+          button.style.opacity = '1';
+        }
+      };
+    }
+  })();
+</script>

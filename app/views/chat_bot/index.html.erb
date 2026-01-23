@@ -88,66 +88,105 @@
 </div>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const chatForm = document.getElementById('chat-form');
-    const messageInput = document.getElementById('message-input');
-    const chatMessages = document.getElementById('chat-messages');
-    const suggestionBtns = document.querySelectorAll('.suggestion-btn');
-
-    // Handle suggestion buttons
-    suggestionBtns.forEach(btn => {
-      btn.addEventListener('click', function() {
-        const question = this.querySelector('p').textContent;
-        messageInput.value = question;
-        messageInput.focus();
-      });
-    });
-
-    // Handle form submission
-    chatForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-      
-      const message = messageInput.value.trim();
-      if (!message) return;
-
-      // Add user message to chat
-      addMessage(message, 'user');
-      messageInput.value = '';
-
-      // Send to server
-      fetch('<%= chat_bot_send_message_path %>', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
-        },
-        body: JSON.stringify({ message: message })
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          setTimeout(() => {
-            addMessage(data.message, 'assistant');
-          }, 500);
-        }
-      });
-    });
-
-    function addMessage(content, role) {
-      const messageDiv = document.createElement('div');
-      messageDiv.className = role === 'user' ? 'flex justify-end' : 'flex justify-start';
-      
-      const time = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
-      
-      messageDiv.innerHTML = `
-        <div class="${role === 'user' ? 'bg-blue-600 text-white' : 'bg-white text-slate-800 border border-slate-200'} rounded-2xl px-6 py-4 max-w-[80%] shadow-sm">
-          <p class="text-sm">${content}</p>
-          <p class="text-xs ${role === 'user' ? 'text-blue-200' : 'text-slate-400'} mt-2">${time}</p>
-        </div>
-      `;
-      
-      chatMessages.appendChild(messageDiv);
-      chatMessages.scrollTop = chatMessages.scrollHeight;
+  // Chat bot with Turbo support
+  (function() {
+    const stateKey = 'chatbot_state';
+    
+    function cleanup() {
+      const state = window[stateKey];
+      if (state) {
+        state.eventListeners?.forEach(({ element, event, handler }) => {
+          if (element) element.removeEventListener(event, handler);
+        });
+        delete window[stateKey];
+      }
     }
-  });
+    
+    function initialize() {
+      cleanup();
+      
+      const chatForm = document.getElementById('chat-form');
+      const messageInput = document.getElementById('message-input');
+      const chatMessages = document.getElementById('chat-messages');
+      const suggestionBtns = document.querySelectorAll('.suggestion-btn');
+      
+      if (!chatForm || !messageInput || !chatMessages) return;
+      
+      window[stateKey] = {
+        eventListeners: []
+      };
+      
+      const state = window[stateKey];
+
+      // Handle suggestion buttons
+      suggestionBtns.forEach(btn => {
+        const clickHandler = function() {
+          const question = this.querySelector('p').textContent;
+          messageInput.value = question;
+          messageInput.focus();
+        };
+        btn.addEventListener('click', clickHandler);
+        state.eventListeners.push({ element: btn, event: 'click', handler: clickHandler });
+      });
+
+      // Handle form submission
+      const submitHandler = function(e) {
+        e.preventDefault();
+        
+        const message = messageInput.value.trim();
+        if (!message) return;
+
+        // Add user message to chat
+        addMessage(message, 'user');
+        messageInput.value = '';
+
+        // Send to server
+        fetch('<%= chat_bot_send_message_path %>', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+          },
+          body: JSON.stringify({ message: message })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            setTimeout(() => {
+              addMessage(data.message, 'assistant');
+            }, 500);
+          }
+        });
+      };
+      chatForm.addEventListener('submit', submitHandler);
+      state.eventListeners.push({ element: chatForm, event: 'submit', handler: submitHandler });
+
+      function addMessage(content, role) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = role === 'user' ? 'flex justify-end' : 'flex justify-start';
+        
+        const time = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+        
+        messageDiv.innerHTML = `
+          <div class="${role === 'user' ? 'bg-blue-600 text-white' : 'bg-white text-slate-800 border border-slate-200'} rounded-2xl px-6 py-4 max-w-[80%] shadow-sm">
+            <p class="text-sm">${content}</p>
+            <p class="text-xs ${role === 'user' ? 'text-blue-200' : 'text-slate-400'} mt-2">${time}</p>
+          </div>
+        `;
+        
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }
+    }
+    
+    // Initialize on page load
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initialize, { once: true });
+    } else {
+      initialize();
+    }
+    
+    // Cleanup before cache
+    document.addEventListener('turbo:before-cache', cleanup, { once: true });
+  })();
 </script>

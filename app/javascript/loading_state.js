@@ -110,22 +110,47 @@ class LoadingStateManager {
 }
 
 // Initialize global loading manager
-document.addEventListener('DOMContentLoaded', () => {
-  window.loadingManager = new LoadingStateManager();
+function initializeLoadingManager() {
+  if (!window.loadingManager) {
+    window.loadingManager = new LoadingStateManager();
+  }
   
-  // Show loading on Turbo navigation
-  document.addEventListener('turbo:before-fetch-request', () => {
+  // Always hide loading on page load/restore
+  window.loadingManager.hide();
+}
+
+// Initialize immediately
+initializeLoadingManager();
+
+// Re-initialize on Turbo load (including back/forward)
+document.addEventListener('turbo:load', initializeLoadingManager);
+
+// Show loading on Turbo navigation
+document.addEventListener('turbo:before-fetch-request', () => {
+  if (window.loadingManager) {
     window.loadingManager.show();
-  });
-  
-  document.addEventListener('turbo:render', () => {
+  }
+});
+
+// Hide loading after render
+document.addEventListener('turbo:render', () => {
+  if (window.loadingManager) {
     window.loadingManager.hide();
-  });
-  
-  // Hide loading on errors
-  document.addEventListener('turbo:frame-missing', () => {
+  }
+});
+
+// Hide loading on errors
+document.addEventListener('turbo:frame-missing', () => {
+  if (window.loadingManager) {
     window.loadingManager.hide();
-  });
+  }
+});
+
+// Cleanup before caching (important for back button)
+document.addEventListener('turbo:before-cache', () => {
+  if (window.loadingManager) {
+    window.loadingManager.hide();
+  }
 });
 
 export default LoadingStateManager;

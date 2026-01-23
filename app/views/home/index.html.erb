@@ -137,29 +137,55 @@
   </div>
 </div>
 
-<!-- Firebase Integration Placeholder -->
+<!-- Firebase Integration for Home Page -->
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    // Initialize real-time view counter for popular articles
-    if (typeof firebaseViewCounter !== 'undefined' && firebaseViewCounter.isInitialized) {
-      const popularArticles = <%= raw @popular_articles.pluck(:id).to_json %>;
-      
-      // Watch each article for real-time updates
-      popularArticles.forEach(articleId => {
-        firebaseViewCounter.watchArticleViews(articleId, (count) => {
-          const element = document.getElementById(`view-count-${articleId}`);
-          if (element && parseInt(element.textContent) !== count) {
-            firebaseViewCounter.animateCount(element, count);
-          }
-        });
-      });
-      
-      // Cleanup on page unload
-      window.addEventListener('beforeunload', () => {
+  // Home page Firebase watchers with Turbo support
+  (function() {
+    const stateKey = 'home_firebase_state';
+    const popularArticles = <%= raw @popular_articles.pluck(:id).to_json %>;
+    
+    function cleanup() {
+      const state = window[stateKey];
+      if (state && state.watchersActive && typeof window.firebaseViewCounter !== 'undefined') {
         popularArticles.forEach(articleId => {
-          firebaseViewCounter.unwatchArticleViews(articleId);
+          window.firebaseViewCounter.unwatchArticleViews(articleId);
         });
-      });
+      }
+      if (state) {
+        delete window[stateKey];
+      }
     }
-  });
+    
+    function initialize() {
+      cleanup();
+      
+      window[stateKey] = {
+        watchersActive: false
+      };
+      
+      const state = window[stateKey];
+      
+      if (typeof window.firebaseViewCounter !== 'undefined' && window.firebaseViewCounter.isInitialized) {
+        popularArticles.forEach(articleId => {
+          window.firebaseViewCounter.watchArticleViews(articleId, (count) => {
+            const element = document.getElementById(`view-count-${articleId}`);
+            if (element && parseInt(element.textContent) !== count) {
+              window.firebaseViewCounter.animateCount(element, count);
+            }
+          });
+        });
+        state.watchersActive = true;
+      }
+    }
+    
+    // Initialize on page load
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initialize, { once: true });
+    } else {
+      initialize();
+    }
+    
+    // Cleanup before cache
+    document.addEventListener('turbo:before-cache', cleanup, { once: true });
+  })();
 </script>

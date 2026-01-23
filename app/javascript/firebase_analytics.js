@@ -142,13 +142,18 @@ class FirebaseViewCounter {
 }
 
 // Initialize global instance
-let firebaseViewCounter;
+function initializeFirebaseViewCounter() {
+  if (!window.firebaseViewCounter) {
+    window.firebaseViewCounter = new FirebaseViewCounter();
+    console.log('🔥 Firebase View Counter initialized', window.firebaseViewCounter.isInitialized ? 'with Firebase' : 'in fallback mode');
+  }
+}
 
-document.addEventListener('DOMContentLoaded', () => {
-  firebaseViewCounter = new FirebaseViewCounter();
-  window.firebaseViewCounter = firebaseViewCounter;
-  console.log('🔥 Firebase View Counter initialized', firebaseViewCounter.isInitialized ? 'with Firebase' : 'in fallback mode');
-});
+// Initialize immediately
+initializeFirebaseViewCounter();
+
+// Re-initialize on Turbo load (important for back/forward navigation)
+document.addEventListener('turbo:load', initializeFirebaseViewCounter);
 
 // Also make it available globally immediately
 if (typeof window !== 'undefined') {
