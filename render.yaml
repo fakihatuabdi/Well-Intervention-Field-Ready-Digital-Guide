@@ -1,9 +1,6 @@
-databases:
-  - name: wi-field-guide-db
-    plan: free
-    databaseName: wi_field_guide
-    user: wi_field_guide
-
+# Database: set DATABASE_URL in the Render dashboard to a free PostgreSQL
+# connection string, e.g. from Neon (https://neon.tech), which does not expire.
+# Use the "pooled" connection string and keep "?sslmode=require" at the end.
 services:
   - type: web
     name: Well-Intervention-Field-Ready-Digital-Guide
@@ -13,9 +10,7 @@ services:
     startCommand: "bundle exec puma -C config/puma.rb"
     envVars:
       - key: DATABASE_URL
-        fromDatabase:
-          name: wi-field-guide-db
-          property: connectionString
+        sync: false
       - key: RAILS_MASTER_KEY
         sync: false
       - key: RAILS_ENV
