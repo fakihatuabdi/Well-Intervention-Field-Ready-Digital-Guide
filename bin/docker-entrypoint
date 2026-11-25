@@ -1,0 +1,9 @@
+#!/bin/bash -e
+# Prepare the database before starting the web server.
+# db:prepare creates/migrates the schema; seeds only add missing starter content.
+if [ "${1}" == "bundle" ] && [ "${3}" == "puma" ]; then
+  ./bin/rails db:prepare
+  ./bin/rails db:seed
+fi
+
+exec "${@}"
