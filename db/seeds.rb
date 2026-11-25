@@ -1,11 +1,10 @@
-# Clear existing data
-puts "Clearing existing data..."
-Article.destroy_all
-CaseStudy.destroy_all
-Update.destroy_all
-Bookmark.destroy_all
+# Starter content for a fresh database.
+#
+# This file is safe to run on every deploy: it only creates records that are
+# missing and NEVER deletes or overwrites existing data (articles edited by
+# users, bookmarks, view counts, chat history all stay intact).
 
-puts "Creating sample articles..."
+puts "Ensuring starter articles exist..."
 
 # General Knowledge Articles
 comprehensive_content = <<~CONTENT
@@ -43,13 +42,11 @@ general_knowledge_articles = [
 ]
 
 general_knowledge_articles.each do |article_data|
-  Article.create!(
-    title: article_data[:title],
-    category: article_data[:category],
-    content: article_data[:content],
-    published: true,
-    view_count: 0
-  )
+  Article.find_or_create_by!(title: article_data[:title], category: article_data[:category], subcategory: nil) do |article|
+    article.content = article_data[:content]
+    article.published = true
+    article.view_count = 0
+  end
 end
 
 # Zona Rokan - Rig Hub Articles
@@ -67,14 +64,11 @@ rig_hub_articles = [
 ]
 
 rig_hub_articles.each do |article_data|
-  Article.create!(
-    title: article_data[:title],
-    category: "zona_rokan",
-    subcategory: article_data[:subcategory],
-    content: article_data[:content],
-    published: true,
-    view_count: 0
-  )
+  Article.find_or_create_by!(title: article_data[:title], category: "zona_rokan", subcategory: article_data[:subcategory]) do |article|
+    article.content = article_data[:content]
+    article.published = true
+    article.view_count = 0
+  end
 end
 
 puts "Creating case studies..."
@@ -101,7 +95,9 @@ case_studies = [
 ]
 
 case_studies.each do |cs_data|
-  CaseStudy.create!(cs_data)
+  CaseStudy.find_or_create_by!(title: cs_data[:title]) do |case_study|
+    case_study.assign_attributes(cs_data.except(:title))
+  end
 end
 
 puts "Creating updates and notices..."
@@ -140,10 +136,12 @@ updates = [
 ]
 
 updates.each do |update_data|
-  Update.create!(update_data)
+  Update.find_or_create_by!(title: update_data[:title]) do |update|
+    update.assign_attributes(update_data.except(:title))
+  end
 end
 
-puts "Seed data created successfully!"
+puts "Seed complete (existing data left untouched)."
 puts "- #{Article.count} articles"
 puts "- #{CaseStudy.count} case studies"
 puts "- #{Update.count} updates"
