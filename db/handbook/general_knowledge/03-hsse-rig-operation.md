@@ -25,6 +25,20 @@ Mematikan dan menyalakan pumping unit adalah tanggung jawab tim produksi. Kru ri
 5. Tidak ada indikator failure yang menyala di panel.
 6. Selector switch kembali ke posisi AUTO.
 
+![Mematikan pumping unit: selector switch ke OFF, lalu tarik rem PU](/handbook-images/pu-mematikan-langkah-1-2.webp)
+
+![Turunkan disconnect switch dan pasang LOTO](/handbook-images/pu-mematikan-langkah-3.webp)
+
+![Posisi buka/tutup valve dan LOTO untuk tiap jenis pekerjaan](/handbook-images/pu-tabel-loto-valve.webp)
+
+![Menyalakan kembali: buka LOTO dan valve di corridor serta wellhead](/handbook-images/pu-menyalakan-langkah-1-2.webp)
+
+![Buka safety lock pin, pastikan selector switch OFF, lalu lepaskan rem PU](/handbook-images/pu-menyalakan-langkah-3-5.webp)
+
+![Naikkan disconnect switch dan periksa indikator failure di panel box](/handbook-images/pu-menyalakan-langkah-6-7.webp)
+
+![Putar selector switch ke AUTO](/handbook-images/pu-menyalakan-langkah-8.webp)
+
 ## Bekerja di Ketinggian: Membuka dan Memasang Horse Head
 
 Pekerjaan horse head melibatkan bekerja di atas walking beam, sehingga wajib menerapkan **100% tie-off**.
@@ -55,6 +69,10 @@ Bawa denah tata letak rig standar saat asesmen lokasi, lalu laporkan halangan ya
 - Posisi unit penyedia jasa (foaming unit, unit ESP, dan lainnya). Ini juga dipakai saat menyusun rencana perjalanan (journey management).
 - Sumber api terbuka di sekitar sumur. Praktik umum industri migas: radius **100 meter** dari kepala sumur harus bebas dari sumber nyala dan kegiatan umum.
 - Fasilitas umum atau milik perusahaan lain di sekitar sumur yang mungkin perlu SIMOPS atau sosialisasi ke warga.
+
+![Pembagian zona berdasarkan analisis risiko (red, yellow, green)](/handbook-images/zona-risiko-wellpad.webp)
+
+![Contoh tata letak peralatan rig di lokasi](/handbook-images/contoh-tata-letak-rig.webp)
 
 ## Bekerja di Bawah atau Dekat Jaringan Listrik
 

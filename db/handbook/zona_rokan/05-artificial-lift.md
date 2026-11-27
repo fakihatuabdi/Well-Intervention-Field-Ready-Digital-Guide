@@ -67,6 +67,8 @@ Pompa dengan sand trapper boleh dipakai untuk clean out sand bila diberi mule sh
 - Insert pump **tidak disarankan** di sumur directional atau horizontal, karena tidak dapat duduk sempurna di seating nipple.
 - Insert pump kecil (1-1/2" dan 1-3/4") yang dimodifikasi bagian bushing-nya (biasanya diberi kode warna) dapat duduk di seating nipple 3-1/2" tanpa mencabut tubing. Modifikasi ini masih dievaluasi.
 
+![Modified cup bushing pada insert pump](/handbook-images/modified-cup-bushing.webp)
+
 ## Crossover dan Tail Liner
 
 **Aturan umum:** koneksi atas crossover box, koneksi bawah pin. Tubing produksi umumnya NUE, tubing pump EUE.
@@ -90,6 +92,10 @@ Pompa dengan sand trapper boleh dipakai untuk clean out sand bila diberi mule sh
 
 **Premium metal mesh screen (PMS)** dipakai sebagai secondary sand control untuk sumur dengan riwayat premature atau repetitive failure. Spesifikasi umumnya: base pipe 3-1/2" J-55 9,2 ppf, koneksi NU, panjang minimal 13 ft, drift 2,867". Kekurangannya, restriksi aliran ke intake pompa lebih besar.
 
+![Konfigurasi tail liner pada tubing pump dan insert pump](/handbook-images/konfigurasi-tail-liner.webp)
+
+![Crossover untuk jacket screen](/handbook-images/crossover-meshrite.webp)
+
 ## ESP di Lapangan Light Oil
 
 - Sebagian besar sumur light oil memakai ESP. Perhatikan sumur kembar dalam satu pad saat asesmen.
@@ -97,6 +103,8 @@ Pompa dengan sand trapper boleh dipakai untuk clean out sand bila diberi mule sh
 - **Megger**: nilai isolasi motor yang baik sekitar **1.500 MΩ atau lebih**, seimbang di setiap fasa. Baca kabel dengan multitester dan megger **setiap 20 joint tubing**.
 - Pemilihan kabel round atau flat berdasarkan ukuran tubing terhadap ID casing. Ukuran konduktor dipilih agar drop tegangan di bawah sekitar 15% tegangan motor.
 - Perakitan pompa dan sambungan kabel ESP dilakukan oleh field engineer penyedia jasa. Cek minimal: kondisi fisik motor dan pompa (congeal, pasir, debris, scale), putaran mekanis bebas tanpa hambatan, kondisi dan level oli, permukaan flange, shaft extension, pembacaan megger, serta kondisi intake dan discharge.
+
+![Susunan sumber listrik sampai ESP downhole](/handbook-images/sumber-listrik-esp.webp)
 
 ## Panduan Umum Operasi Rod-Driven PCP
 

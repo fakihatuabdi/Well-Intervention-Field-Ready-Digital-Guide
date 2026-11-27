@@ -15,6 +15,8 @@ Lapangan heavy oil di Zona Rokan memakai **injeksi uap (steamflood)** untuk memp
 - Ada juga komplesi cased hole dengan perforasi, dan kombinasi keduanya.
 - Wellhead ada dua jenis: flange type dan doughnut type. **Rig routine service hanya mengerjakan doughnut type**, karena tubing hanger-nya berfungsi sebagai barrier yang dibutuhkan.
 
+![Tipikal komplesi lapangan steamflood heavy oil](/handbook-images/komplesi-tipikal-heavy-oil.webp)
+
 ### Masalah yang Sering Terjadi
 
 **1. Gas locking.** Gas keluar dari minyak saat tekanan turun melewati standing valve, sehingga terbentuk kolom gas di antara standing valve dan travelling valve. Pompa tidak rusak tetapi tidak berfungsi. Salah satu solusinya memasang gas anchor.

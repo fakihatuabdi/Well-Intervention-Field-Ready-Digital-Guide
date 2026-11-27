@@ -21,6 +21,8 @@ TBA menggantung primary sand control (screen liner) ke casing produksi. Seal-nya
 - Ukuran TBA tidak bisa diubah dalam pekerjaan routine service. Karena itu, **cek ukuran TBA** sebelum menentukan ukuran pompa dan tubing.
 - Rangkaian yang terlalu besar dapat tidak bisa masuk liner, atau liner dan TBA ikut tercabut bersama tubing.
 
+![Ukuran tie back assembly (TBA)](/handbook-images/tie-back-assembly.webp)
+
 ## Tail Liner dan Jacket
 
 Tail liner adalah screen yang dipasang di bawah pompa sebagai secondary sand control.
@@ -28,6 +30,8 @@ Tail liner adalah screen yang dipasang di bawah pompa sebagai secondary sand con
 - Sisakan rat hole minimal sekitar 5 ft antara ujung bawah tail (bull plug) dan PBTD.
 - Pada insert pump, screen di bawah seating nipple menyelubungi pompa sehingga disebut **jacket**. Panjang jacket harus lebih panjang dari bagian insert pump di bawah seating nipple (sekitar 22 ft).
 - Jenis yang umum: meshrite, screen liner (dengan ukuran celah tertentu), dan premium metal mesh screen.
+
+![Premium metal mesh screen (PMS)](/handbook-images/premium-metal-mesh-screen.webp)
 
 ## Koneksi Tubing: EUE dan NUE
 
@@ -37,6 +41,10 @@ Tail liner adalah screen yang dipasang di bawah pompa sebagai secondary sand con
 | **NUE (Non-Upset End)** | Tanpa penebalan. OD coupling lebih kecil, kekuatan sambungan lebih rendah. |
 
 Perhatikan bahwa **OD terbesar rangkaian ada di coupling**. Clearance coupling terhadap ID liner menentukan apakah rangkaian bisa masuk dengan aman.
+
+![Susunan tubing assembly](/handbook-images/tubing-assembly.webp)
+
+![Ukuran part rangkaian tubing pump](/handbook-images/tabel-part-tubing-pump.webp)
 
 ## Aturan Crossover
 
@@ -55,3 +63,5 @@ Gas anchor dipasang di bawah pompa untuk memisahkan gas sebelum masuk pompa.
 - Minyak mengalir turun lewat dip tube dan masuk ke pompa.
 
 Gas anchor bisa dipakai di bawah sucker rod pump maupun ESP.
+
+![Mud anchor (gas anchor)](/handbook-images/mud-anchor.webp)

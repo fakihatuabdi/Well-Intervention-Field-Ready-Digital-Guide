@@ -42,6 +42,10 @@ Prinsip penting:
 - Bila tidak ada kemajuan (misalnya kurang dari 1 ft dalam 15–20 menit atau tekanan naik jauh dari baseline), hentikan dan diskusikan dengan engineer.
 - Setelah selesai, angkat rangkaian beberapa puluh ft, tunggu pasir mengendap, lalu turunkan lagi untuk memastikan tidak ada fill baru.
 
+![Ilustrasi operasi foaming](/handbook-images/ilustrasi-operasi-foaming.webp)
+
+![Diagram alir pemilihan metode clean out sand](/handbook-images/diagram-alir-clean-out-sand.webp)
+
 ## Well Control Saat Foaming
 
 - Barrier internal: hidrostatik, FOSV / kelly cock, dan IBOP. Barrier eksternal: BOP.
@@ -62,6 +66,20 @@ Material yang terbawa saat pompa dicabut menentukan langkah berikutnya. Salah id
 
 Validasi melalui bau, warna, dan tekstur, lalu pilih langkah yang sesuai: casing scraper bila ada scale, sirkulasi air atau air panas bila ada congeal, clean out bila ada pasir, atau langsung memasang pompa bila bersih.
 
+![Scale yang menyumbat tubing](/handbook-images/temuan-scale-di-tubing.webp)
+
+![Pasir yang melumuri insert pump](/handbook-images/temuan-pasir-insert-pump-1.webp)
+
+![Pasir pada rangkaian yang dicabut](/handbook-images/temuan-pasir-insert-pump-2.webp)
+
+![Pasir di ujung rangkaian](/handbook-images/temuan-pasir-insert-pump-3.webp)
+
+![Congeal di dalam tubing](/handbook-images/temuan-congeal-1.webp)
+
+![Congeal pada rangkaian](/handbook-images/temuan-congeal-2.webp)
+
 ## Penggantian Tubing Ber-scale
 
 Bila tubing yang dicabut penuh kerak, ganti dengan tubing yang baik atau baru. Bila tetap ingin memakai tubing lama, setiap joint wajib di-rabbit dengan diameter terbesar alat yang akan dimasukkan.
+
+![Scale mengurangi drift ID tubing](/handbook-images/drift-id-tubing-scale.webp)

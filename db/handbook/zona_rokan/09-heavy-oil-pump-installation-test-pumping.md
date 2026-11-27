@@ -26,6 +26,12 @@ Intake insert pump berada **22 ft di bawah mechanical top lock** yang duduk di s
 
 Contoh: PSD 735 ft, maka seating nipple di 713 ft.
 
+![Seating nipple](/handbook-images/seating-nipple.webp)
+
+![Konfigurasi insert pump](/handbook-images/konfigurasi-insert-pump-1.webp)
+
+![Konfigurasi insert pump (barrel lebih panjang)](/handbook-images/konfigurasi-insert-pump-2.webp)
+
 ### Service Insert Pump Tanpa Mencabut Tubing
 
 | Dari \ Ke | 1,5" | 1,75" | 2,25" |
@@ -66,6 +72,8 @@ Penyebab umum: insert pump tidak sealing di seating nipple, tubing bocor, atau v
 7. Test pumping **650 psi selama 5 menit**.
 8. Bila gagal, kembali ke langkah 6.
 
+![Prosedur pemasangan insert pump](/handbook-images/prosedur-pemasangan-insert-pump.webp)
+
 ### Floating Rod
 
 Insert pump 1,5" atau 1,75" dengan rangkaian rod 3/4" penuh dan PSD kurang dari 700 ft berpotensi **floating rod**: saat downstroke, rangkaian rod tidak cukup berat untuk mendorong plunger turun, sehingga fluida tidak terpompa.
@@ -86,6 +94,8 @@ Tujuannya menghindari round trip tubing. Syaratnya:
 | Foaming lebih dari 2 jam dan sumur full return | COS dengan sirkulasi pompa rig |
 | Foaming lebih dari 2 jam dan sumur loss | Ganti ke rangkaian mule shoe / rangkaian baru sambil menunggu |
 | Material program tidak tersedia | Konfirmasi ke CE untuk perubahan pompa (misalnya insert pump 1,5" ke tubing pump 1,75"), lalu lapor ke scheduler |
+
+![Diagram alir program insert pump ke insert pump](/handbook-images/insert-pump-ke-insert-pump.webp)
 
 ## Mule Shoe di Bawah Pompa
 
@@ -114,6 +124,12 @@ Saat mengerjakan on-off tool:
 1. Cek on-off tool di permukaan sebelum running. Bila sulit tersambung, minta penggantian alat.
 2. Cek OD terbesar rangkaian, ID liner, dan gunakan mule shoe yang lebih kecil sebagai pemandu melewati TBA.
 3. Bila sulit tersambung di dalam sumur, coba dengan memutar ke posisi berbeda maksimal 1 jam. Bila tetap gagal, lapor ke atasan dan CE.
+
+![On-off tool: foto asli dan skematik](/handbook-images/on-off-tool.webp)
+
+![Saat ID tubing lebih besar dari OD plunger, on-off tool tidak diperlukan](/handbook-images/on-off-tool-tubing-besar.webp)
+
+![Saat ID tubing lebih kecil dari OD plunger, on-off tool diperlukan](/handbook-images/on-off-tool-tubing-kecil.webp)
 
 ## Penggantian Tubing
 
@@ -185,3 +201,7 @@ Penyelesaian sumur biasanya dikerjakan tim pendukung secara offline, tetapi seba
 2. Pastikan spacing 6" setelah tubing terisi penuh dan dipompa 1 volume tubing.
 3. Sumur horizontal: tag to bottom tidak diperlukan karena pompa sudah di inklinasi lebih dari 80° dan lateral sangat panjang, sehingga COS / foaming juga tidak dilakukan. Sumur directional tetap melakukan COS / foaming.
 4. Pasang mule shoe di bawah tubing pump pada sumur directional, terutama bila PSD di dalam screen liner, sebagai pemandu.
+
+![Insert pump pada sumur vertikal](/handbook-images/insert-pump-vertikal.webp)
+
+![Insert pump pada sumur directional](/handbook-images/insert-pump-directional.webp)
