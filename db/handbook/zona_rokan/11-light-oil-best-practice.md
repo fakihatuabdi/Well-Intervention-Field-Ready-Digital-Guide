@@ -81,6 +81,8 @@ Masalah pasir sering ditemui di sumur rod pump maupun ESP. Memperbaiki sand cont
 
 Pemasangan di ESP memakai casing shroud yang menyelubungi intake, atau tail liner dengan cup packer assembly. Konfigurasi tail liner: cup packer, safety joint, perforated tubing, dan screen liner yang dipilih oleh engineer.
 
+![Perbandingan instalasi liner konvensional dan tail liner pada ESP](/handbook-images/tail-liner-esp.webp)
+
 ## Sumur Directional dan Horizontal
 
 Kabel ESP bisa terjepit saat rangkaian duduk di lekukan bawah sumur. Kurangi risiko ini dengan mengetahui **azimuth** sumur (arah ujung sumur terhadap utara, diukur searah jarum jam) sehingga posisi kabel bisa digeser. Contoh: sumur dengan inklinasi maksimum 38° dan azimuth 85° berarti ujung sumur mengarah kira-kira ke timur.
@@ -116,6 +118,10 @@ Pengetesan tubing hanger wajib dilakukan meski ada kabel sensor. Prosedur yang d
 3. Ujung kabel ditutup plug dari penyedia pompa sebelum tes.
 4. Sebelum mendudukkan tubing hanger, kencangkan fitting dan gulung kabel mengelilingi tubing atau nipple di atas tubing hanger dengan hati-hati.
 5. Dudukkan tubing hanger, lalu tes sesuai checklist.
+
+![Tubing hanger PCP dengan lubang untuk kabel sensor](/handbook-images/tubing-hanger-pcp.webp)
+
+![Cover plug untuk kabel downhole PCP](/handbook-images/cover-plug-kabel-pcp.webp)
 
 ## Pump Spacing SRP di Lapangan Light Oil
 

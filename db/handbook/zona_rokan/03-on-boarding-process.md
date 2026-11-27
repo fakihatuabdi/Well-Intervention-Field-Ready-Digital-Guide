@@ -73,6 +73,8 @@ Bila ada kesalahan setelah data terkirim, gunakan fitur edit dan kirim ulang.
 
 Bawa denah tata letak rig saat asesmen lokasi. Laporkan halangan yang perlu dihilangkan atau dimitigasi (misalnya pumping unit, atau lebih dari satu pekerjaan dalam satu wellpad). Perhatikan posisi peralatan rig, posisi unit penyedia jasa, dan jarak aman 100 meter dari sumber api terbuka.
 
+![Contoh rencana posisi peralatan rig](/handbook-images/rencana-posisi-peralatan-rig.webp)
+
 ## Pengembalian Pompa SRP ke Pump Shop
 
 Pompa yang dicabut diperiksa melalui DIFA untuk mengetahui penyebab kegagalan, lalu bisa direkondisi. Komponen yang sering tidak kembali: seating nipple insert pump, on-off tool, plunger assembly, dan standing valve assembly.
@@ -83,3 +85,5 @@ Yang perlu dilakukan kru rig:
 2. Tulis prioritas DIFA di dokumen pengiriman (cargo manifest) saat menyerahkan pompa lama.
 3. Untuk prioritas tinggi, minta kru transportasi memberi tanda cat pada pompa.
 4. Cantumkan semua bagian pompa yang dikembalikan beserta keterangan bila tidak lengkap.
+
+![Bagian pompa yang sering tidak ikut dikembalikan](/handbook-images/part-pompa-rentan-tertinggal.webp)

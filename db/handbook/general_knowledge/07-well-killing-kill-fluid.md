@@ -30,6 +30,8 @@ Prosedur umum:
 
 **Tekanan permukaan maksimum.** Hitung pada top perforation dan bottom perforation, lalu pakai yang paling rendah (biasanya di top perforation). Pada komplesi open hole gravel pack, top perforation mengacu ke casing shoe.
 
+![Ilustrasi metode bullhead](/handbook-images/ilustrasi-bullhead.webp)
+
 ## Rumus Berat Kill Fluid
 
 Dengan asumsi annulus atau tubing sudah terisi air (8,33 ppg):

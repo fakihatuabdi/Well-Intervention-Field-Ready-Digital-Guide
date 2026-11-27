@@ -29,6 +29,8 @@ Routine service adalah intervensi sumur dengan kompleksitas rendah, misalnya pen
 
 Pendukung yang sering dipakai: vacuum truck (suplai air), foaming unit, crane atau foco truck, dan unit dari penyedia jasa ESP atau PCP.
 
+![Skematik BOP stack kelas III](/handbook-images/skematik-bop-kelas-3.webp)
+
 ## Konsep Operasi Leapfrog (Dual Equipment)
 
 Rig konvensional bekerja dengan satu kru. Pada operasi **leapfrog**, kru dibagi menjadi dua tim dengan tujuan berbeda dalam satu pekerjaan:
@@ -40,6 +42,8 @@ Hasilnya, persiapan, penutupan sumur, dan perpindahan rig menjadi aktivitas para
 
 Ada pekerjaan yang sebaiknya tetap diselesaikan langsung oleh rig, misalnya sumur horizontal, sumur yang bermasalah saat test pumping, dan pompa yang standing valve-nya mudah terpancing.
 
+![Perbandingan rig konvensional dan rig leapfrog](/handbook-images/konvensional-vs-leapfrog.webp)
+
 ## Flush-By Unit
 
 Flush-by adalah unit khusus untuk mengganti insert pump atau plunger tubing pump **tanpa mencabut tubing**. Bentuknya mirip mobile rig, tetapi dilengkapi tangki air dan pompa triplex. Karakteristik umumnya:
@@ -50,3 +54,7 @@ Flush-by adalah unit khusus untuk mengganti insert pump atau plunger tubing pump
 - Tangki air kecil (sekitar 40 bbl) dan pompa triplex dengan pulsation dampener, safety release valve, dan kill line.
 
 Karena jejak (footprint) dan biayanya lebih kecil, flush-by cocok untuk pekerjaan ringan seperti penggantian plunger atau insert pump.
+
+![Flush-by unit](/handbook-images/flush-by-unit-1.webp)
+
+![Flush-by unit dalam posisi transport](/handbook-images/flush-by-unit-2.webp)

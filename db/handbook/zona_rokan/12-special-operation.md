@@ -22,6 +22,8 @@ Flush-by adalah unit khusus untuk mengganti insert pump dan plunger tubing pump 
 5. Tangki air sekitar 5.000 liter (40 bbl).
 6. Pompa triplex 6–8 bpm, dilengkapi pulsation dampener, safety release valve, kill line valve, dan indikator kecepatan pompa.
 
+![Layout operasi unit flush-by](/handbook-images/layout-flush-by.webp)
+
 ## Stimulasi Acid
 
 Stimulasi acid pada dasarnya pekerjaan rig workover, tetapi rig routine service kadang membantu. Detailnya didiskusikan dengan engineer program stimulasi. Pekerjaan terbagi tiga tahap:

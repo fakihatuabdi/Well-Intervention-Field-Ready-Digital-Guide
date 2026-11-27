@@ -15,6 +15,10 @@ Artificial lift dipakai ketika tekanan reservoir tidak cukup untuk mengangkat fl
 
 Rangkaian dari atas ke bawah: bridle di horse head, carrier bar, polished rod yang melewati stuffing box (membentuk seal), sucker rod dan pony rod, lalu pompa.
 
+![Skematik tipikal pumping unit dan sumur minyak](/handbook-images/skematik-pumping-unit.webp)
+
+![Skematik hydraulic pumping unit](/handbook-images/hydraulic-pumping-unit.webp)
+
 ### Tubing Pump dan Insert Pump
 
 | Aspek | Tubing Pump | Insert Pump (Rod Pump) |
@@ -23,6 +27,10 @@ Rangkaian dari atas ke bawah: bridle di horse head, carrier bar, polished rod ya
 | Ukuran plunger | Lebih besar, volume pompa lebih besar | Lebih kecil |
 | Penggantian | Harus mencabut tubing | Cukup mencabut sucker rod (bila seating nipple cocok) |
 | Beban angkat | Lebih besar | Lebih ringan |
+
+![Tubing pump dan insert pump](/handbook-images/tubing-pump-vs-insert-pump.webp)
+
+![Bagian-bagian insert pump](/handbook-images/bagian-insert-pump.webp)
 
 ### Komponen Rangkaian Rod
 
@@ -36,6 +44,8 @@ Rangkaian dari atas ke bawah: bridle di horse head, carrier bar, polished rod ya
 **CR = (Swept volume + Unswept volume) / Unswept volume**
 
 CR yang tinggi membantu pompa membuka valve dan mengurangi risiko gas lock. Unswept volume sangat dipengaruhi pump spacing, sehingga spacing yang tepat penting untuk CR yang optimal.
+
+![Ilustrasi compression ratio pada tubing pump](/handbook-images/compression-ratio.webp)
 
 ### Pompa Khusus untuk Sumur Berpasir
 
@@ -52,6 +62,22 @@ CR yang tinggi membantu pompa membuka valve dan mengurangi risiko gas lock. Unsw
 
 **Pump slippage** adalah fluida yang lolos di antara plunger dan barrel. Slippage sedikit diperlukan untuk pelumasan (umumnya beberapa persen produksi). Terlalu sedikit merusak pompa, terlalu banyak berarti kehilangan produksi.
 
+![Tubing pump special clearance](/handbook-images/special-clearance.webp)
+
+![Tubing pump reguler dan stroke-thru](/handbook-images/stroke-thru.webp)
+
+![Short plunger dibandingkan regular plunger](/handbook-images/short-plunger.webp)
+
+![API conventional dan Farr plunger](/handbook-images/farr-plunger.webp)
+
+![Tubing pump reguler dan double travelling valve (DTV)](/handbook-images/double-travelling-valve.webp)
+
+![Plunger dengan sand trapper dan scraper](/handbook-images/sand-trapper-scraper.webp)
+
+![Skematik sand trapper](/handbook-images/skematik-sand-trapper.webp)
+
+![Regular plunger dibandingkan plunger SandDozer](/handbook-images/sanddozer.webp)
+
 ## Electric Submersible Pump (ESP)
 
 ESP adalah pompa sentrifugal bertingkat (multistage) dengan motor listrik yang seluruhnya ditenggelamkan di dalam fluida. Cocok untuk laju alir sedang sampai tinggi.
@@ -67,6 +93,28 @@ Komponen dari bawah ke atas:
 | **Pompa** | Tiap stage terdiri dari impeller (memberi energi kecepatan) dan diffuser (mengubah kecepatan menjadi tekanan). |
 | **Kabel** | Kabel daya dan motor lead extension (MLE). |
 
+![Tipikal komplesi dengan ESP](/handbook-images/komplesi-esp.webp)
+
+![Bagian-bagian utama ESP](/handbook-images/bagian-esp.webp)
+
+![Gambaran singkat sistem ESP](/handbook-images/sistem-esp.webp)
+
+![Impeller dan diffuser pompa sentrifugal multistage](/handbook-images/impeller-diffuser.webp)
+
+![Komponen pompa ESP](/handbook-images/rangkaian-pompa-esp.webp)
+
+![Konstruksi motor ESP](/handbook-images/motor-esp.webp)
+
+![Intake ESP](/handbook-images/intake-esp.webp)
+
+![Prinsip kerja advanced gas handler](/handbook-images/prinsip-gas-handler.webp)
+
+![Gas handler](/handbook-images/gas-handler.webp)
+
+![Peralatan permukaan ESP](/handbook-images/surface-equipment-esp-1.webp)
+
+![Peralatan permukaan ESP (switchboard dan transformer)](/handbook-images/surface-equipment-esp-2.webp)
+
 ### Kabel ESP
 
 - **Round**: dipakai bila ruang annulus cukup.
@@ -74,6 +122,14 @@ Komponen dari bawah ke atas:
 - Komponen: konduktor tembaga, isolasi, jaket atau lead sheath, dan armor logam pelindung.
 - Ukuran konduktor memakai sistem **AWG**. Makin besar angkanya, makin kecil kabelnya. Ukuran yang umum di ESP adalah 1, 2, 4, dan 6.
 - Penyambungan kabel (splicing) dipakai untuk memperpanjang atau memperbaiki kabel.
+
+![Konstruksi kabel ESP round dan flat](/handbook-images/konstruksi-kabel-esp.webp)
+
+![Lapisan kabel ESP](/handbook-images/kabel-esp-1.webp)
+
+![Lapisan kabel ESP](/handbook-images/kabel-esp-2.webp)
+
+![Lapisan kabel ESP flat](/handbook-images/kabel-esp-3.webp)
 
 ### Megger Test
 
@@ -86,6 +142,12 @@ Isolasi yang baik memiliki resistansi yang sangat tinggi. Resistansi turun karen
 - Baca kabel dengan megger dan multitester secara berkala saat menurunkan rangkaian (misalnya setiap 20 joint).
 - Nilai isolasi motor yang baik umumnya sangat tinggi (orde ribuan megaohm), dan nilai tiap fasa harus seimbang.
 
+![Analogi aliran air dan arus listrik](/handbook-images/aliran-air-vs-listrik.webp)
+
+![Cara membaca resistansi insulasi dengan megger](/handbook-images/cara-megger.webp)
+
+![Megger (kiri) dan multitester (kanan)](/handbook-images/megger-multitester.webp)
+
 ## Progressive Cavity Pump (PCP)
 
 PCP adalah pompa positive displacement berbasis putaran. Rotor berbentuk heliks berputar di dalam stator elastomer, membentuk rongga yang bergerak naik membawa fluida.
@@ -93,6 +155,8 @@ PCP adalah pompa positive displacement berbasis putaran. Rotor berbentuk heliks 
 - Pada **rod-driven PCP**, motor ada di permukaan dan putaran diteruskan lewat sucker rod.
 - Cocok untuk fluida kental dan fluida yang mengandung pasir.
 - Saat bongkar pasang drive head biasanya dibutuhkan dua alat angkat, dan perlu koordinasi dengan penyedia pompa untuk kabel dan spacing rotor.
+
+![Tipikal komplesi dengan progressive cavity pump](/handbook-images/komplesi-pcp.webp)
 
 ## Memilih Jenis Artificial Lift
 

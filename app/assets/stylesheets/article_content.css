@@ -147,3 +147,34 @@
 }
 
 .article-toc a:hover { text-decoration: underline; }
+
+/* Pictures from the handbook */
+.article-body .article-figure {
+  margin: 1.25rem 0;
+  text-align: center;
+}
+
+.article-body .article-figure a {
+  display: inline-block;
+  max-width: 100%;
+  text-decoration: none;
+}
+
+.article-body .article-figure img {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  display: block;
+  height: auto;
+  margin: 0 auto;
+  max-height: 32rem;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+.article-body .article-figure figcaption {
+  color: #64748b;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  margin-top: 0.5rem;
+}

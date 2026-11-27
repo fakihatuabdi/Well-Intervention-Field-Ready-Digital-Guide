@@ -26,6 +26,8 @@ Cek TOS dengan sucker rod memangkas banyak langkah dibanding dengan tubing (tida
 | Naikkan tubing ke PSD, pasang tubing hanger, N/D BOP | – |
 | TIH insert pump, N/U tree dan jalur produksi | TIH insert pump, N/U tree dan jalur produksi |
 
+![Perbandingan langkah kerja cek TOS dengan tubing dan dengan sucker rod](/handbook-images/cek-tos-tubing-vs-rod.webp)
+
 ## Clean Out Sand (COS)
 
 - Bila standing valve **terpancing** saat mencabut plunger, COS dapat memakai tubing pump lama yang ada di sumur.
@@ -41,6 +43,10 @@ Tubing pump lama hanya boleh dipakai COS bila **semua** terpenuhi:
 5. Hasil deteksi kebocoran tubing menunjukkan tubing tidak bocor.
 
 Bila tidak terpenuhi, gunakan mule shoe untuk COS / FOS.
+
+![Diagram alir pemilihan tubing pump dan mule shoe untuk COS/FOS](/handbook-images/pemilihan-pump-mule-shoe-cos.webp)
+
+![Matriks keputusan COS/FOS](/handbook-images/keputusan-cos-fos.webp)
 
 ### Ukuran Mule Shoe yang Direkomendasikan
 
@@ -69,6 +75,10 @@ Bila sumur hole clean tetapi ditemukan:
 
 maka konfirmasi dengan temuan pada rod dan tubing. Lakukan COS bila ditemukan plunger tergores pasir (goresan vertikal minimal sekitar 70% panjang body, atau goresan tebal dan dalam), pasir sebagian atau penuh di dalam pompa, atau sisa clay / congeal. Metode COS bisa foaming, sirkulasi pompa rig, atau sand bailing sesuai kondisi dan program.
 
+![Temuan pasir pada insert pump baru yang gagal saat test pumping](/handbook-images/temuan-difa-pompa-baru.webp)
+
+![Diagram alir clean out sand untuk kasus hole clean](/handbook-images/cos-hole-clean.webp)
+
 ## Tubing Pump 1-3/4" untuk COS
 
 Standing valve 1-3/4" standar sulit di-set, sehingga tidak direkomendasikan untuk COS. Standing valve 1-3/4" yang dimodifikasi (cap dan spring dilepas) terbukti mudah di-set dan di-unset, sehingga pompa ini bisa dipakai untuk COS.
@@ -77,6 +87,8 @@ Standing valve 1-3/4" standar sulit di-set, sehingga tidak direkomendasikan untu
 - Sebelum mematikan aliran setelah COS / FOS, angkat rangkaian minimal 30 ft (perhatikan posisi swivel agar tidak menabrak crown).
 - Lakukan cooling down setelah rangkaian di atas, tunggu pasir mengendap 15 menit, lalu turunkan untuk memastikan tidak ada fill baru.
 - Bila mule shoe 6 ft tidak tersedia atau sand fill 30 ft atau lebih, gunakan open end dan mule shoe dalam trip terpisah.
+
+![Modifikasi standing valve 1-3/4": cap dan spring dilepas](/handbook-images/modifikasi-standing-valve.webp)
 
 ## Laju Pompa Minimum COS dengan Air
 

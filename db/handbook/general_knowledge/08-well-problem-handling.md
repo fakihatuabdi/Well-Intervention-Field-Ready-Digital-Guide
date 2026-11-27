@@ -26,6 +26,8 @@ Kondisi tubing menurun seiring waktu dan kebocoran sering tertutup minyak kental
 
 Bila kebocoran ada di rangkaian tubing, clean out sand menjadi tidak efektif karena prinsip U-tube terganggu.
 
+![Diagram alir deteksi awal kebocoran tubing](/handbook-images/prosedur-deteksi-kebocoran-tubing.webp)
+
 ## Overpull dan Tubing Terjepit
 
 Overpull adalah tarikan **di atas berat rangkaian**. Bedakan dengan tension total yang terbaca di weight indicator.
@@ -37,6 +39,8 @@ Prinsip menentukan batas overpull:
 - Perhatikan juga komponen terlemah di atas tubing hanger (landing joint, crossover, FOSV).
 
 Bila tubing hanger tidak terangkat sama sekali, curigai titik jepit di tubing hanger dan gunakan batas kekuatan komponen di atas tubing hanger. Lakukan overpull secara bertahap dan tahan di setiap tahap.
+
+![Definisi overpull dan cara membacanya di weight indicator](/handbook-images/definisi-overpull.webp)
 
 ## Mechanical Back-off
 

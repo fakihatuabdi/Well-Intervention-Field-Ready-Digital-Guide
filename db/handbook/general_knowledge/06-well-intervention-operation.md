@@ -37,6 +37,8 @@ Langkah umum menentukan spacing:
 
 Pada sumur dalam, sucker rod memanjang karena beratnya sendiri dan pengaruh temperatur, sehingga spacing perlu dikompensasi sesuai kedalaman.
 
+![Prosedur pump spacing tubing pump](/handbook-images/prosedur-pump-spacing.webp)
+
 ## Mule Shoe di Bawah Pompa
 
 Mule shoe adalah potongan tubing dengan ujung miring yang dipasang di bawah pompa. Manfaatnya:
@@ -45,6 +47,8 @@ Mule shoe adalah potongan tubing dengan ujung miring yang dipasang di bawah pomp
 - Pompa bisa langsung dipakai untuk clean out sand sehingga waktu kerja lebih singkat.
 - Membantu mengarahkan rangkaian masuk ke liner pada sumur berarah.
 - Melindungi pompa saat dimasukkan ke sumur.
+
+![Penggunaan tubing dan mule shoe di bawah seating nipple](/handbook-images/mule-shoe-di-bawah-seating-nipple.webp)
 
 ## Pencegahan Unscrew Sucker Rod
 
@@ -62,11 +66,19 @@ Unscrew adalah lepasnya sambungan sucker rod di dalam sumur, biasanya di sambung
 
 **Hand-tight untuk polished rod dan sinker bar.** Rod tong bisa merusak body polished rod. Kencangkan dengan tangan sampai shoulder bertemu, beri garis penanda, lalu putar lagi sampai garis membentuk sudut sekitar 90° (rod 3/4" dan 7/8") atau 180° (rod 1").
 
+![Rotasi sucker rod pada tiap well service](/handbook-images/rotasi-sucker-rod.webp)
+
+![Garis lurus penanda posisi awal sebelum sucker rod dikencangkan](/handbook-images/penguncian-rod-posisi-awal.webp)
+
+![Pergeseran garis setelah sucker rod dikencangkan (circumferential displacement)](/handbook-images/penguncian-rod-setelah-kencang.webp)
+
 ## Posisi Plunger Saat Meninggalkan Sumur
 
 Saat test pumping, pasir bisa ikut masuk ke tubing dan mengendap di atas plunger selama sumur menunggu dinyalakan. Bila gerakan pertama plunger ke atas, pasir dapat masuk ke celah plunger dan barrel lalu menjepit plunger.
 
 Praktik baik: tinggalkan horse head di posisi **upstroke** (counterweight di titik terbawah), sehingga gerakan pertama plunger saat POP adalah **turun**. Fluida dari bawah plunger akan membuyarkan pasir yang mengendap.
+
+![Posisi plunger dan pasir yang terperangkap saat pumping unit berhenti](/handbook-images/posisi-plunger-temperatur.webp)
 
 ## Pengetesan Rod BOP
 

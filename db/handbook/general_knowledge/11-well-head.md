@@ -16,6 +16,8 @@ Wellhead adalah peralatan di permukaan yang menggantung rangkaian casing dan tub
 | **Flange type** | Tubing digantung dengan sambungan flange | Tidak selalu memiliki tubing hanger yang bisa diuji sebagai barrier |
 | **Doughnut type** | Tubing digantung dengan tubing hanger (doughnut) di dalam tubing head | Tubing hanger berfungsi sebagai barrier yang bisa dites, sehingga lebih sesuai untuk rig routine service |
 
+![Wellhead flange type dan doughnut type](/handbook-images/wellhead-flange-doughnut.webp)
+
 ## Tubing Hanger sebagai Barrier
 
 - Ganti seal tubing hanger setiap kali tubing hanger dicabut.
@@ -45,6 +47,8 @@ Sumur dengan injeksi kimia lewat capillary tube atau sensor downhole memakai tub
 - Gunakan tipe tubing hanger yang integritas materialnya terjamin untuk modifikasi ini.
 - Tutup fitting dengan plug saat pressure test, dan tes **bersamaan** dengan seal tubing hanger, karena kebocoran sering terjadi di jalur ini.
 - Pada sumur dengan kabel sensor, perhatikan jarak antara tubing hanger dan annular BOP yang sempit. Gulung kabel dengan hati-hati sebelum mendudukkan tubing hanger.
+
+![Capillary tube plug untuk pengetesan tekanan tubing hanger](/handbook-images/capillary-tube-plug.webp)
 
 ## Rod BOP di Wellhead SRP
 

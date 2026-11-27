@@ -46,6 +46,8 @@ Contoh: 30 joint tubing, tes awal tidak hold. Lay down 10 joint teratas sambil m
 
 Saat memasukkan kembali, **dahulukan tubing baru** agar kebocoran pada tubing pengganti cepat terdeteksi. Masukkan tubing pump baru bersama standing valve agar tubing bisa diisi air.
 
+![Diagram alir pressure test tubing di sumur horizontal](/handbook-images/pressure-test-tubing-horizontal.webp)
+
 ## Overpull dan Tubing Stuck
 
 1. Jangan melebihi kapasitas tarik rig sesuai sertifikat kelayakan yang berlaku, koneksi terlemah di rangkaian, dan komponen terlemah di atas tubing hanger.

@@ -52,6 +52,20 @@ Kriteria terukur yang umum dipakai sebelum membuka wellhead: **SICP dan SITP = 0
 
 Semua aliran dari dan ke sumur harus lewat manifold dan masuk ke tangki. Jangan membuang aliran ke udara terbuka.
 
+![Contoh mud manifold di rig routine service](/handbook-images/mud-manifold.webp)
+
+![Contoh standpipe manifold](/handbook-images/standpipe-manifold.webp)
+
+![Ilustrasi line-up pemompaan dan bleed-off](/handbook-images/ilustrasi-line-up.webp)
+
+![Tipikal line-up untuk observasi dan pemompaan sebelum N/D tree](/handbook-images/line-up-observasi-pemompaan.webp)
+
+![Tipikal line-up saat observasi dan bullhead (sumur GOR tinggi)](/handbook-images/line-up-bullhead-gor-tinggi.webp)
+
+![Line-up dengan bleed-off melalui choke manifold dan MGS](/handbook-images/line-up-bleed-off-mgs.webp)
+
+![Line-up reverse circulation untuk wellbore clean up (sumur GOR tinggi)](/handbook-images/line-up-reverse-circulation.webp)
+
 ## Hal Lain yang Membantu Eksekusi
 
 1. Laporkan anomali secepatnya (misalnya overpull atau killing yang berlebihan) agar tidak terjadi treatment berlebih.
