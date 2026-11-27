@@ -1,0 +1,37 @@
+<%# Locals: articles, accent ("sky" or "emerald") %>
+<% icon_bg = accent == "emerald" ? "bg-emerald-50" : "bg-sky-50" %>
+<% icon_fg = accent == "emerald" ? "text-emerald-600" : "text-sky-600" %>
+
+<% if articles.any? %>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+    <% articles.each_with_index do |article, index| %>
+      <%= link_to article_path(article), class: "block" do %>
+        <div class="bg-white rounded-xl shadow-lg p-5 md:p-6 hover-lift border elegant-border transition-all duration-300 scale-in h-full flex flex-col justify-between" style="animation-delay: <%= [index, 12].min * 0.05 %>s;">
+          <div class="flex items-start gap-4">
+            <div class="p-3 rounded-lg <%= icon_bg %> flex-shrink-0">
+              <svg class="w-6 h-6 <%= icon_fg %>" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+              </svg>
+            </div>
+            <div class="min-w-0">
+              <h3 class="font-bold text-lg text-slate-800 mb-2 break-words"><%= article.title %></h3>
+              <p class="text-slate-600 text-sm"><%= article_excerpt(article, length: 140) %></p>
+            </div>
+          </div>
+          <div class="mt-4 flex items-center justify-between text-xs text-slate-500">
+            <span class="inline-flex items-center px-3 py-1 rounded-full bg-gradient-to-r from-emerald-100 to-green-100 text-emerald-800 font-medium">Available</span>
+            <span><%= article.view_count.to_i %> views</span>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+
+  <% if articles.respond_to?(:total_pages) && articles.total_pages > 1 %>
+    <div class="mt-8"><%= paginate articles %></div>
+  <% end %>
+<% else %>
+  <div class="bg-white rounded-xl shadow p-8 text-center text-slate-500">
+    Belum ada artikel di bagian ini. Jalankan <code>bin/rails handbook:load</code> untuk memuat konten handbook.
+  </div>
+<% end %>

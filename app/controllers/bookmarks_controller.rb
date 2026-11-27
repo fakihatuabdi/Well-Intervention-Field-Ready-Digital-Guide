@@ -2,7 +2,7 @@ class BookmarksController < ApplicationController
   rescue_from ActiveRecord::RecordNotFound, with: :bookmark_not_found
   
   def index
-    @bookmarks = Bookmark.includes(:article)
+    @bookmarks = owned_bookmarks.includes(:article)
                         .order(updated_at: :desc)
                         .page(params[:page])
                         .per(12)
@@ -13,7 +13,7 @@ class BookmarksController < ApplicationController
   end
 
   def destroy
-    bookmark = Bookmark.find(params[:id])
+    bookmark = owned_bookmarks.find(params[:id])
     
     respond_to do |format|
       if bookmark.destroy

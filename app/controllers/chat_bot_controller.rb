@@ -1,13 +1,14 @@
 class ChatBotController < ApplicationController
+  HISTORY_LIMIT = 100
+  MAX_MESSAGE_LENGTH = 2000
+
   before_action :set_session_id
   
   def index
     user = current_user if defined?(current_user)
-    @messages = if user
-      ChatMessage.for_user(user)
-    else
-      ChatMessage.for_session(@session_id)
-    end
+    scope = user ? ChatMessage.for_user(user) : ChatMessage.for_session(@session_id)
+    # Show only the latest messages so a long history cannot slow the page down
+    @messages = scope.reorder(created_at: :desc).limit(HISTORY_LIMIT).to_a.reverse
   rescue => e
     Rails.logger.error "Error loading chat: #{e.message}"
     flash.now[:alert] = "An error occurred loading chat history."
@@ -15,8 +16,11 @@ class ChatBotController < ApplicationController
   end
 
   def send_message
-    message_content = params[:message]
+    message_content = params[:message].to_s.strip
     return render json: { success: false, error: 'Message cannot be blank' }, status: :unprocessable_entity if message_content.blank?
+    if message_content.length > MAX_MESSAGE_LENGTH
+      return render json: { success: false, error: "Message is too long (max #{MAX_MESSAGE_LENGTH} characters)" }, status: :unprocessable_entity
+    end
     
     user = current_user if defined?(current_user)
     
@@ -46,7 +50,7 @@ class ChatBotController < ApplicationController
     }
   rescue ActiveRecord::RecordInvalid => e
     Rails.logger.error "Validation error in chat: #{e.message}"
-    render json: { success: false, error: e.message }, status: :unprocessable_entity
+    render json: { success: false, error: 'Message could not be saved' }, status: :unprocessable_entity
   rescue => e
     Rails.logger.error "Error in chat: #{e.message}"
     render json: { success: false, error: 'Failed to send message' }, status: :internal_server_error

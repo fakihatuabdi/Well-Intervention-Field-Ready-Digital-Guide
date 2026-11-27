@@ -1,7 +1,7 @@
 class ChatMessage < ApplicationRecord
   belongs_to :user, optional: true
   
-  validates :message, presence: true
+  validates :message, presence: true, length: { maximum: 10_000 }
   validates :role, presence: true, inclusion: { in: %w[user assistant] }
   
   # Ensure either user_id or session_id is present

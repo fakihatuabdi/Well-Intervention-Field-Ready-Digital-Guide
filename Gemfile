@@ -55,6 +55,8 @@ gem "pg_search" # For full-text search functionality
 gem "kaminari" # For pagination
 gem "tailwindcss-rails" # For modern styling
 gem "devise" # For user authentication
+gem "kramdown", "~> 2.4" # Render handbook articles written in Markdown
+gem "kramdown-parser-gfm", "~> 1.1" # GitHub-style Markdown (tables)
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
