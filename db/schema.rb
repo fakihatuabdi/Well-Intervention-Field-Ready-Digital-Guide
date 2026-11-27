@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_01_21_014958) do
+ActiveRecord::Schema[7.1].define(version: 2026_11_27_033408) do
   create_table "articles", force: :cascade do |t|
     t.string "title"
     t.string "category"
@@ -21,6 +21,10 @@ ActiveRecord::Schema[7.1].define(version: 2026_01_21_014958) do
     t.integer "view_count", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "position", default: 0, null: false
+    t.string "summary"
+    t.string "seed_digest"
+    t.index ["category", "subcategory", "position"], name: "index_articles_on_category_and_subcategory_and_position"
     t.index ["category"], name: "index_articles_on_category"
     t.index ["published"], name: "index_articles_on_published"
     t.index ["slug"], name: "index_articles_on_slug", unique: true
@@ -32,6 +36,10 @@ ActiveRecord::Schema[7.1].define(version: 2026_01_21_014958) do
     t.text "last_position"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "session_id"
+    t.index ["article_id"], name: "index_bookmarks_on_article_id"
+    t.index ["session_id"], name: "index_bookmarks_on_session_id"
+    t.index ["user_id"], name: "index_bookmarks_on_user_id"
   end
 
   create_table "case_studies", force: :cascade do |t|

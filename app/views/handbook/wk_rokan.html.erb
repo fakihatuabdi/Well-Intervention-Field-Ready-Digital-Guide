@@ -8,9 +8,10 @@
     <% end %>
     <div class="flex items-center gap-4 mt-4 mb-2">
       <%= image_tag "wk_rokan_logo.png", class: "w-20 h-20", alt: "Zona Rokan Operation" %>
-      <h1 class="text-4xl font-bold text-slate-800">Zona Rokan Operation</h1>
+      <h1 class="text-3xl md:text-4xl font-bold text-slate-800">Zona Rokan Operation</h1>
     </div>
     <p class="text-slate-600">Specific operational guidelines for Zona Rokan field operations</p>
+    <p class="mt-2 text-sm text-emerald-800 bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-2 inline-block">Khusus implementasi operasi di Zona Rokan</p>
   </div>
 
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -23,7 +24,7 @@
           </div>
           <div>
             <h3 class="font-bold text-lg text-slate-800 mb-2">Rig Hub</h3>
-            <p class="text-slate-600 text-sm mb-3">10 articles available</p>
+            <p class="text-slate-600 text-sm mb-3"><%= pluralize(@rig_hub_count.to_i, "article") %> available</p>
           </div>
         </div>
         <div class="mt-4">

@@ -384,6 +384,8 @@ DEPENDENCIES
   importmap-rails
   jbuilder
   kaminari
+  kramdown (~> 2.4)
+  kramdown-parser-gfm (~> 1.1)
   pg (~> 1.5)
   pg_search
   puma (~> 6)
