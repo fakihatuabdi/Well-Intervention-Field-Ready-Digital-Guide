@@ -1,3 +1,6 @@
+# Database: set DATABASE_URL in the Render dashboard to a free PostgreSQL
+# connection string, e.g. from Neon (https://neon.tech), which does not expire.
+# Use the "pooled" connection string and keep "?sslmode=require" at the end.
 services:
   - type: web
     name: Well-Intervention-Field-Ready-Digital-Guide
@@ -6,6 +9,8 @@ services:
     buildCommand: "./bin/render-build.sh"
     startCommand: "bundle exec puma -C config/puma.rb"
     envVars:
+      - key: DATABASE_URL
+        sync: false
       - key: RAILS_MASTER_KEY
         sync: false
       - key: RAILS_ENV

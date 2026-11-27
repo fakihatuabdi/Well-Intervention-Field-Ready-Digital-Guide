@@ -1,19 +1,28 @@
-# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+gk_packer:
+  title: Packer
+  slug: gk-packer
+  category: general_knowledge
+  content: "## Fungsi Packer\n\nPacker menyekat annulus antara tubing dan casing."
+  summary: Fungsi dan jenis packer.
+  position: 10
+  published: true
+  view_count: 0
 
-one:
-  title: MyString
-  category: MyString
-  subcategory: MyString
-  content: MyText
-  slug: MyString
-  published: false
-  view_count: 1
+zr_pump:
+  title: Artificial Lift
+  slug: zr-artificial-lift
+  category: zona_rokan
+  subcategory: rig_hub
+  content: "## Sucker Rod Pump\n\nPraktik lapangan di Zona Rokan."
+  position: 5
+  published: true
+  view_count: 0
 
-two:
-  title: MyString
-  category: MyString
-  subcategory: MyString
-  content: MyText
-  slug: MyString
+draft:
+  title: Draft Article
+  slug: draft-article
+  category: general_knowledge
+  content: Not ready yet.
+  position: 99
   published: false
-  view_count: 1
+  view_count: 0

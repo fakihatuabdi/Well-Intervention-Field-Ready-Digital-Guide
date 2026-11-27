@@ -18,7 +18,7 @@
               
               <div class="flex flex-wrap items-center gap-3 mb-3">
                 <span class="px-3 py-1 bg-gradient-to-r from-sky-100 to-cyan-100 text-sky-700 rounded-full text-xs font-medium">
-                  <%= bookmark.article.category.gsub('_', ' ').titleize %>
+                  <%= bookmark.article.category_label %>
                 </span>
                 
                 <% if bookmark.article.subcategory.present? %>
@@ -36,7 +36,7 @@
               </div>
               
               <p class="text-slate-600 text-sm">
-                <%= truncate(bookmark.article.content, length: 150) %>
+                <%= article_excerpt(bookmark.article, length: 150) %>
               </p>
             </div>
             

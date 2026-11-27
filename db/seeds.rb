@@ -1,80 +1,20 @@
-# Clear existing data
-puts "Clearing existing data..."
-Article.destroy_all
-CaseStudy.destroy_all
-Update.destroy_all
-Bookmark.destroy_all
+# Starter content for a fresh database.
+#
+# This file is safe to run on every deploy: it only creates records that are
+# missing and NEVER deletes or overwrites existing data (articles edited by
+# users, bookmarks, view counts, chat history all stay intact).
 
-puts "Creating sample articles..."
-
-# General Knowledge Articles
-comprehensive_content = <<~CONTENT
-  📚 Comprehensive Content in Development
-
-  We're meticulously crafting detailed, field-tested content for this section to ensure the highest quality and accuracy for our well intervention professionals.
-  
-  ⏳ What to Expect:
-  • In-depth technical guidelines and procedures
-  • Real-world case studies and best practices
-  • Step-by-step operational instructions
-  • Safety protocols and quality standards
-  • Expert insights from industry veterans
-
-  This content is currently under review by our technical team and subject matter experts to deliver the most valuable and practical information for your field operations.
-  
-  🔔 Stay tuned for updates — quality content takes time, and we're committed to excellence.
-
-  Thank you for your patience as we build the most comprehensive well intervention resource for field professionals.
-CONTENT
-
-general_knowledge_articles = [
-  { title: "Abbreviation", category: "general_knowledge", content: comprehensive_content },
-  { title: "Drilling & Well Intervention Safety", category: "general_knowledge", content: comprehensive_content },
-  { title: "HSSE Rig Operation", category: "general_knowledge", content: comprehensive_content },
-  { title: "Rig Unit", category: "general_knowledge", content: comprehensive_content },
-  { title: "Pre-Well Intervention Execution", category: "general_knowledge", content: comprehensive_content },
-  { title: "Well Intervention Operation", category: "general_knowledge", content: comprehensive_content },
-  { title: "Well Problem Handling", category: "general_knowledge", content: comprehensive_content },
-  { title: "Packer", category: "general_knowledge", content: comprehensive_content },
-  { title: "Well Head", category: "general_knowledge", content: comprehensive_content },
-  { title: "Well Completion", category: "general_knowledge", content: comprehensive_content },
-  { title: "Artificial Lift", category: "general_knowledge", content: comprehensive_content },
-  { title: "Glossary", category: "general_knowledge", content: comprehensive_content }
-]
-
-general_knowledge_articles.each do |article_data|
-  Article.create!(
-    title: article_data[:title],
-    category: article_data[:category],
-    content: article_data[:content],
-    published: true,
-    view_count: 0
-  )
-end
-
-# Zona Rokan - Rig Hub Articles
-rig_hub_articles = [
-  { title: "Objective", subcategory: "rig_hub", content: comprehensive_content },
-  { title: "Rig Hub Introduction", subcategory: "rig_hub", content: comprehensive_content },
-  { title: "On-Boarding Process", subcategory: "rig_hub", content: comprehensive_content },
-  { title: "Sumatera Operation Area", subcategory: "rig_hub", content: comprehensive_content },
-  { title: "Artificial Lift", subcategory: "rig_hub", content: comprehensive_content },
-  { title: "Heavy Oil Best Practice", subcategory: "rig_hub", content: comprehensive_content },
-  { title: "Light Oil Best Practice", subcategory: "rig_hub", content: comprehensive_content },
-  { title: "Special Operation", subcategory: "rig_hub", content: comprehensive_content },
-  { title: "Simultaneous Operations (SIMOPS)", subcategory: "rig_hub", content: comprehensive_content },
-  { title: "Appendix", subcategory: "rig_hub", content: comprehensive_content }
-]
-
-rig_hub_articles.each do |article_data|
-  Article.create!(
-    title: article_data[:title],
-    category: "zona_rokan",
-    subcategory: article_data[:subcategory],
-    content: article_data[:content],
-    published: true,
-    view_count: 0
-  )
+# Handbook articles (General Knowledge + Zona Rokan Operation) come from the
+# Markdown files in db/handbook. The loader only adds or refreshes articles
+# that nobody edited, and never deletes anything. A broken file must not stop
+# the app from starting, so errors are reported and the seed continues.
+puts "Loading handbook articles from db/handbook..."
+begin
+  result = HandbookContentLoader.load!(logger: $stdout)
+  puts "Handbook: #{result}"
+rescue HandbookContentLoader::InvalidFile, ActiveRecord::ActiveRecordError => e
+  warn "Handbook content was NOT loaded: #{e.class}: #{e.message}"
+  warn "Fix the file above, then run: bin/rails handbook:load"
 end
 
 puts "Creating case studies..."
@@ -101,7 +41,9 @@ case_studies = [
 ]
 
 case_studies.each do |cs_data|
-  CaseStudy.create!(cs_data)
+  CaseStudy.find_or_create_by!(title: cs_data[:title]) do |case_study|
+    case_study.assign_attributes(cs_data.except(:title))
+  end
 end
 
 puts "Creating updates and notices..."
@@ -140,10 +82,12 @@ updates = [
 ]
 
 updates.each do |update_data|
-  Update.create!(update_data)
+  Update.find_or_create_by!(title: update_data[:title]) do |update|
+    update.assign_attributes(update_data.except(:title))
+  end
 end
 
-puts "Seed data created successfully!"
+puts "Seed complete (existing data left untouched)."
 puts "- #{Article.count} articles"
 puts "- #{CaseStudy.count} case studies"
 puts "- #{Update.count} updates"

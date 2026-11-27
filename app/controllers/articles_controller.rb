@@ -48,12 +48,8 @@ class ArticlesController < ApplicationController
   end
 
   def bookmark
-    user = current_user if defined?(current_user)
-    bookmark = Bookmark.find_or_initialize_by(
-      article_id: @article.id,
-      user_id: user&.id
-    )
-    bookmark.last_position = params[:position]
+    bookmark = owned_bookmarks.find_or_initialize_by(article_id: @article.id)
+    bookmark.last_position = params[:position].to_s.first(50)
     
     if bookmark.save
       render json: { success: true, bookmarked: true, bookmark_id: bookmark.id, message: 'Article bookmarked!' }
@@ -66,11 +62,7 @@ class ArticlesController < ApplicationController
   end
   
   def unbookmark
-    user = current_user if defined?(current_user)
-    bookmark = Bookmark.find_by(
-      article_id: @article.id,
-      user_id: user&.id
-    )
+    bookmark = owned_bookmarks.find_by(article_id: @article.id)
     
     if bookmark
       if bookmark.destroy
@@ -88,11 +80,7 @@ class ArticlesController < ApplicationController
   end
   
   def check_bookmark
-    user = current_user if defined?(current_user)
-    bookmark = Bookmark.find_by(
-      article_id: @article.id,
-      user_id: user&.id
-    )
+    bookmark = owned_bookmarks.find_by(article_id: @article.id)
     
     render json: { 
       bookmarked: bookmark.present?,
@@ -106,11 +94,17 @@ class ArticlesController < ApplicationController
   private
 
   def set_article
-    @article = Article.find(params[:id])
+    @article = Article.published.find(params[:id])
   end
   
   def article_not_found
-    flash[:alert] = "Article not found."
-    redirect_to root_path
+    respond_to do |format|
+      format.html do
+        flash[:alert] = "Article not found."
+        redirect_to root_path
+      end
+      format.json { render json: { success: false, error: "Article not found" }, status: :not_found }
+      format.any { head :not_found }
+    end
   end
 end

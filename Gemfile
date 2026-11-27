@@ -9,8 +9,10 @@ gem "rails", "~> 7.1.3"
 # The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
 gem "sprockets-rails"
 
-# Use sqlite3 as the database for Active Record
-gem "sqlite3", "~> 1.4"
+# Database adapters
+# SQLite for local development and tests; PostgreSQL in production
+gem "sqlite3", "~> 1.4", group: [:development, :test]
+gem "pg", "~> 1.5", group: :production
 
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", "~> 6"
@@ -53,6 +55,8 @@ gem "pg_search" # For full-text search functionality
 gem "kaminari" # For pagination
 gem "tailwindcss-rails" # For modern styling
 gem "devise" # For user authentication
+gem "kramdown", "~> 2.4" # Render handbook articles written in Markdown
+gem "kramdown-parser-gfm", "~> 1.1" # GitHub-style Markdown (tables)
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
