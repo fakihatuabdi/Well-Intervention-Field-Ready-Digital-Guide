@@ -62,6 +62,9 @@ class SearchController < ApplicationController
       { title: 'Bookmarks', description: 'Your Saved Articles', url: bookmarks_path, icon: 'bookmark', keywords: ['bookmark', 'saved', 'favorite', 'tersimpan', 'favorit'] }
     ]
     
+    menu_items.reject! { |item| item[:url] == chat_bot_path } unless AppSettings.chat_bot_enabled?
+    menu_items << { title: 'Admin', description: 'Manage content and users', url: admin_root_path, icon: 'settings', keywords: ['admin', 'kelola', 'user', 'pengguna'] } if current_user&.admin?
+
     menu_items.select do |item|
       item[:title].downcase.include?(query) ||
       item[:description].downcase.include?(query) ||

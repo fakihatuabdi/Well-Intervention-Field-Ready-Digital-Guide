@@ -32,10 +32,15 @@ Isi di service → *Environment* (sebaiknya lewat *Secret group*):
 |---|---|
 | `DATABASE_URL` | connection URI dari langkah 2 |
 | `SECRET_KEY_BASE` | string acak panjang, buat dengan `openssl rand -hex 64` (atau `bin/rails secret`) |
-| `FIREBASE_API_KEY`, `FIREBASE_AUTH_DOMAIN`, `FIREBASE_DATABASE_URL`, `FIREBASE_PROJECT_ID`, `FIREBASE_STORAGE_BUCKET`, `FIREBASE_MESSAGING_SENDER_ID`, `FIREBASE_APP_ID` | sama seperti di `.env.example` (untuk penghitung view) |
+| `ADMIN_EMAIL` | e-mail akun admin pertama (dibuat sekali saat belum ada admin) |
+| `ADMIN_PASSWORD` | password admin pertama (min. 10 karakter, huruf dan angka) |
+| `FORCE_SSL` | `true` (Northflank sudah HTTPS) |
+| `REQUIRE_LOGIN` | `true` (default) agar semua orang harus login, atau `false` agar demo bisa dibaca tanpa login |
+
+Daftar lengkap pengaturan ada di [audit-it/03-KONFIGURASI.md](audit-it/03-KONFIGURASI.md).
 
 `RAILS_ENV`, `PORT`, `RAILS_SERVE_STATIC_FILES` dan `RAILS_LOG_TO_STDOUT` sudah diatur di Dockerfile.
-Paket gratis RAM-nya kecil, jadi Dockerfile memakai `WEB_CONCURRENCY=1`
+Paket gratis RAM-nya kecil, jadi Dockerfile memakai `WEB_CONCURRENCY=0`
 (1 proses Puma, 5 thread). Naikkan hanya jika RAM cukup.
 
 ## 5. Deploy dan cek
@@ -43,11 +48,5 @@ Paket gratis RAM-nya kecil, jadi Dockerfile memakai `WEB_CONCURRENCY=1`
 2. Buka URL publik yang diberikan. Cek juga `https://<url>/up` harus mengembalikan halaman hijau (200).
 3. Setiap push ke `main` akan build dan deploy ulang otomatis (bisa dimatikan di pengaturan CI/CD).
 
-## Jalankan image yang sama di komputer sendiri (opsional)
-```bash
-docker build -t wi-guide .
-docker run -p 3000:3000 \
-  -e DATABASE_URL=postgresql://user:pass@host/db \
-  -e SECRET_KEY_BASE=$(openssl rand -hex 64) \
-  wi-guide
-```
+## Jalankan di komputer sendiri
+Lihat [audit-it/02-INSTALASI.md](audit-it/02-INSTALASI.md) (`docker compose up`).

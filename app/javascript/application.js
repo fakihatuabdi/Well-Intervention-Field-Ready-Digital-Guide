@@ -1,6 +1,5 @@
 // Configure your import map in config/importmap.rb. Read more: https://github.com/rails/importmap-rails
 import "@hotwired/turbo-rails"
 import "controllers"
-import "./firebase_analytics"
-import "./loading_state"
-import "./notifications"
+import "loading_state"
+import "notifications"

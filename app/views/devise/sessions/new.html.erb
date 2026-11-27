@@ -1,0 +1,37 @@
+<div class="fade-in w-full max-w-md mx-auto mt-16">
+  <div class="bg-white rounded-2xl shadow-lg p-8 border border-slate-100">
+    <div class="flex items-center gap-3 mb-6">
+      <%= image_tag "logo.png", alt: "", class: "w-12 h-12 object-contain" %>
+      <div>
+        <h1 class="text-2xl font-bold text-slate-800">Sign in</h1>
+        <p class="text-sm text-slate-500">Well Intervention Field-Ready Digital Guide</p>
+      </div>
+    </div>
+
+    <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: "space-y-4", data: { turbo: false } }) do |f| %>
+      <div>
+        <%= f.label :email, "E-mail", class: admin_label_class %>
+        <%= f.email_field :email, autofocus: true, autocomplete: "username", required: true, class: admin_input_class %>
+      </div>
+      <div>
+        <%= f.label :password, class: admin_label_class %>
+        <%= f.password_field :password, autocomplete: "current-password", required: true, class: admin_input_class %>
+      </div>
+      <% if devise_mapping.rememberable? %>
+        <label class="flex items-center gap-2 text-sm text-slate-600">
+          <%= f.check_box :remember_me, class: "w-4 h-4" %> Keep me signed in on this device
+        </label>
+      <% end %>
+      <%= f.submit "Sign in", class: AdminHelper::PRIMARY_BUTTON + " w-full py-3" %>
+    <% end %>
+
+    <div class="mt-6 text-sm text-slate-600 space-y-1">
+      <% if AppSettings.allow_signup? %>
+        <p>No account yet? <%= link_to "Request an account", new_user_registration_path, class: "text-sky-700 font-semibold hover:underline" %></p>
+      <% else %>
+        <p>No account yet? Ask an administrator to create one for you.</p>
+      <% end %>
+      <p>Forgot your password? Ask an administrator to reset it.</p>
+    </div>
+  </div>
+</div>

@@ -1,8 +1,23 @@
 #!/bin/bash -e
-# Prepare the database before starting the web server.
-# db:prepare creates/migrates the schema; seeds only add missing starter content
-# and load the handbook articles. A seed problem must not keep the site down,
-# so it is reported and the server still starts.
+# Runs before the web server inside the Docker container.
+#
+# 1. SECRET_KEY_BASE (signs session cookies): when it is not given, a random
+#    one is created once and kept in the storage volume, so sign-ins survive
+#    restarts without anyone having to invent a secret.
+# 2. Database: create/migrate the schema (db:prepare).
+# 3. Seeds: load handbook articles and create the first admin. They never
+#    delete or overwrite data. A seed problem must not keep the site down,
+#    so it is reported and the server still starts.
+if [ -z "${SECRET_KEY_BASE}" ]; then
+  key_file="/rails/storage/secret_key_base"
+  if [ ! -s "${key_file}" ]; then
+    (umask 077 && head -c 64 /dev/urandom | od -An -vtx1 | tr -d ' \n' > "${key_file}")
+    echo "Created a new SECRET_KEY_BASE in ${key_file}"
+  fi
+  SECRET_KEY_BASE="$(cat "${key_file}")"
+  export SECRET_KEY_BASE
+fi
+
 if [ "${1}" == "bundle" ] && [ "${3}" == "puma" ]; then
   ./bin/rails db:prepare
   ./bin/rails db:seed || echo "WARNING: db:seed failed (see log above). The app starts anyway; run 'bin/rails db:seed' after fixing it."

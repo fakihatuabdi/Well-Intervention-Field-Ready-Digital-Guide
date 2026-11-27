@@ -2,10 +2,11 @@ class ChatBotController < ApplicationController
   HISTORY_LIMIT = 100
   MAX_MESSAGE_LENGTH = 2000
 
+  before_action :ensure_enabled
   before_action :set_session_id
   
   def index
-    user = current_user if defined?(current_user)
+    user = current_user
     scope = user ? ChatMessage.for_user(user) : ChatMessage.for_session(@session_id)
     # Show only the latest messages so a long history cannot slow the page down
     @messages = scope.reorder(created_at: :desc).limit(HISTORY_LIMIT).to_a.reverse
@@ -22,7 +23,7 @@ class ChatBotController < ApplicationController
       return render json: { success: false, error: "Message is too long (max #{MAX_MESSAGE_LENGTH} characters)" }, status: :unprocessable_entity
     end
     
-    user = current_user if defined?(current_user)
+    user = current_user
     
     # Store user message
     user_message = ChatMessage.create!(
@@ -57,7 +58,17 @@ class ChatBotController < ApplicationController
   end
 
   private
-  
+
+  # The chat bot is off unless CHAT_BOT_ENABLED=true (see AppSettings).
+  def ensure_enabled
+    return if AppSettings.chat_bot_enabled?
+
+    respond_to do |format|
+      format.json { render json: { success: false, error: 'Chat bot is turned off' }, status: :not_found }
+      format.any { redirect_to root_path, alert: 'The AI Chat Bot is turned off on this server.' }
+    end
+  end
+
   def set_session_id
     @session_id = session[:chat_session_id] ||= SecureRandom.uuid
   end

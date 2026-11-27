@@ -1,0 +1,10 @@
+<% links = [["Dashboard", admin_root_path], ["Articles", admin_articles_path], ["Notices", admin_updates_path], ["Case studies", admin_case_studies_path], ["Users", admin_users_path], ["Audit log", admin_audit_events_path]] %>
+<div class="mb-6 mt-14 lg:mt-0">
+  <p class="text-xs font-semibold uppercase tracking-wide text-sky-700 mb-2">Admin</p>
+  <nav class="flex flex-wrap gap-2">
+    <% links.each do |label, path| %>
+      <% active = current_page?(path) || (path != admin_root_path && request.path.start_with?(path)) %>
+      <%= link_to label, path, class: "px-3 py-1.5 rounded-lg text-sm font-medium #{active ? 'bg-sky-600 text-white' : 'bg-white text-slate-700 hover:bg-sky-50 border border-slate-200'}" %>
+    <% end %>
+  </nav>
+</div>

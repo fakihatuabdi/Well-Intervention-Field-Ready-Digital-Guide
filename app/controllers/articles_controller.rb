@@ -1,5 +1,5 @@
 class ArticlesController < ApplicationController
-  before_action :set_article, only: [:show, :increment_view, :bookmark, :unbookmark, :sync_firebase, :check_bookmark]
+  before_action :set_article, only: [:show, :increment_view, :bookmark, :unbookmark, :check_bookmark]
   rescue_from ActiveRecord::RecordNotFound, with: :article_not_found
 
   def index
@@ -33,18 +33,6 @@ class ArticlesController < ApplicationController
   rescue => e
     Rails.logger.error "Error incrementing view: #{e.message}"
     render json: { success: false, error: 'Failed to update view count' }, status: :unprocessable_entity
-  end
-
-  def sync_firebase
-    # Return current view count for Firebase sync
-    render json: { 
-      success: true, 
-      article_id: @article.id,
-      view_count: @article.view_count 
-    }
-  rescue => e
-    Rails.logger.error "Error syncing Firebase: #{e.message}"
-    render json: { success: false, error: 'Failed to sync' }, status: :unprocessable_entity
   end
 
   def bookmark

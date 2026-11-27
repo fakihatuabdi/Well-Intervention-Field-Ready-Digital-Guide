@@ -36,7 +36,6 @@
       <!-- Bookmark Button -->
       <button 
         id="bookmark-btn"
-        onclick="toggleBookmark()"
         data-article-id="<%= @article.id %>"
         class="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-sky-500 to-cyan-600 hover:from-sky-600 hover:to-cyan-700 text-white font-semibold text-sm rounded-lg transition-all duration-300 shadow-md hover:shadow-lg hover:scale-105 active:scale-95 flex-shrink-0">
         <svg id="bookmark-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
@@ -107,102 +106,7 @@
   </div>
 </div>
 
-<script>
-  // Article page initialization with Turbo support
-  (function() {
-    // State management - use unique keys to avoid conflicts
-    const stateKey = `article_${<%= @article.id %>}_state`;
-    
-    // Clean up any existing state
-    function cleanup() {
-      const state = window[stateKey];
-      if (state) {
-        if (state.firebaseSyncInterval) {
-          clearInterval(state.firebaseSyncInterval);
-        }
-        if (state.firebaseWatcherActive && typeof window.firebaseViewCounter !== 'undefined') {
-          window.firebaseViewCounter.unwatchArticleViews(<%= @article.id %>);
-        }
-        delete window[stateKey];
-      }
-    }
-    
-    // Initialize page
-    function initialize() {
-      // Cleanup first
-      cleanup();
-      
-      // Create new state
-      window[stateKey] = {
-        firebaseSyncInterval: null,
-        firebaseWatcherActive: false
-      };
-      
-      const articleId = <%= @article.id %>;
-      const state = window[stateKey];
-      
-      // Auto-sync Firebase
-      async function autoSyncFirebase() {
-        console.log('🔍 Article page loaded - ID:', articleId);
-        
-        try {
-          const response = await fetch(`/articles/${articleId}/sync_firebase`);
-          const data = await response.json();
-          
-          if (data.success) {
-            const currentViewCount = data.view_count;
-            console.log('📊 Current view count from server:', currentViewCount);
-            
-            let retries = 0;
-            const maxRetries = 50;
-            
-            const syncWhenReady = () => {
-              if (typeof window.firebaseViewCounter !== 'undefined' && window.firebaseViewCounter.isInitialized) {
-                console.log('✅ Firebase ready, syncing...');
-                window.firebaseViewCounter.syncViewCount(articleId, currentViewCount);
-                
-                if (!state.firebaseWatcherActive) {
-                  state.firebaseWatcherActive = true;
-                  window.firebaseViewCounter.watchArticleViews(articleId, (count) => {
-                    const element = document.getElementById('view-count-<%= @article.id %>');
-                    if (element && count !== currentViewCount) {
-                      element.textContent = count;
-                      console.log('🔄 View count updated from Firebase:', count);
-                    }
-                  });
-                }
-              } else if (retries < maxRetries) {
-                retries++;
-                if (retries % 10 === 0) {
-                  console.log('⏳ Waiting for Firebase... (attempt', retries, ')');
-                }
-                setTimeout(syncWhenReady, 100);
-              } else {
-                console.warn('⚠️ Firebase initialization timeout');
-              }
-            };
-            
-            syncWhenReady();
-          }
-        } catch (error) {
-          console.error('❌ Error auto-syncing Firebase:', error);
-        }
-      }
-      
-      autoSyncFirebase();
-    }
-    
-    // Only run if we're on the page (not in cache)
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', initialize, { once: true });
-    } else {
-      initialize();
-    }
-    
-    // Cleanup before Turbo cache
-    document.addEventListener('turbo:before-cache', cleanup, { once: true });
-  })();
-  
+<script nonce="<%= content_security_policy_nonce %>">
   // Bookmark functionality (scoped in IIFE)
   (function() {
     let isBookmarked = false;
@@ -345,5 +249,8 @@
   
   // Initialize bookmark status when page loads
   checkBookmarkStatus();
+
+  const bookmarkButton = document.getElementById('bookmark-btn');
+  if (bookmarkButton) bookmarkButton.addEventListener('click', window.toggleBookmark);
 })();
 </script>

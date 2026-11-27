@@ -1,0 +1,29 @@
+<div class="fade-in w-full max-w-5xl mx-auto">
+  <%= render "admin/shared/nav" %>
+  <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+    <div>
+      <h1 class="text-3xl font-bold text-slate-800">Notices</h1>
+      <p class="text-slate-600">"Updates &amp; Notices" on the home page. A notice shows from its publish date.</p>
+    </div>
+    <%= link_to "New notice", new_admin_update_path, class: AdminHelper::PRIMARY_BUTTON %>
+  </div>
+  <div class="bg-white rounded-xl shadow border border-slate-100 overflow-x-auto">
+    <table class="min-w-full text-sm">
+      <thead><tr class="text-left text-slate-500 border-b"><th class="p-3">Title</th><th class="p-3">Category</th><th class="p-3">Publish date</th><th class="p-3"></th></tr></thead>
+      <tbody>
+        <% @updates.each do |update| %>
+          <tr class="border-b border-slate-100">
+            <td class="p-3 font-medium text-slate-800"><%= update.title %></td>
+            <td class="p-3"><%= update.category.to_s.titleize %></td>
+            <td class="p-3 whitespace-nowrap"><%= update.published_at ? l(update.published_at, format: :short) : status_badge("Not set (hidden)", :slate) %></td>
+            <td class="p-3 whitespace-nowrap">
+              <%= link_to "Edit", edit_admin_update_path(update), class: "text-sky-700 hover:underline mr-3" %>
+              <%= button_to "Delete", admin_update_path(update), method: :delete, form_class: "inline", class: "text-red-700 hover:underline", data: { turbo_confirm: "Delete this notice?" } %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+  <div class="mt-4"><%= paginate @updates %></div>
+</div>

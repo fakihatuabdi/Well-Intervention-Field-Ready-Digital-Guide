@@ -1,0 +1,40 @@
+# Runs on every push and pull request: automated tests plus the security
+# checks IT asks for. Results are visible on GitHub under "Actions".
+name: CI
+
+on:
+  push:
+    branches: [main, "revisi/**", "claude/**"]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - name: Prepare test database
+        run: bin/rails db:prepare
+        env:
+          RAILS_ENV: test
+      - name: Run tests
+        run: bin/rails test
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - name: Code security scan (Brakeman)
+        run: bin/brakeman --no-pager --exit-on-warn
+      - name: Library vulnerability scan (bundler-audit)
+        run: bin/bundler-audit check --update
+      - name: JavaScript library scan (importmap)
+        run: bin/importmap audit

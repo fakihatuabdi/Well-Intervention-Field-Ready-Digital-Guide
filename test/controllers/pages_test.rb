@@ -1,8 +1,10 @@
 require "test_helper"
 
 class PagesTest < ActionDispatch::IntegrationTest
+  setup { sign_in users(:reader) }
+
   %w[/ /home /handbook /handbook/general_knowledge /handbook/wk_rokan /handbook/rig_hub
-     /search /calculator /chat_bot /bookmarks].each do |path|
+     /search /calculator /bookmarks].each do |path|
     test "#{path} loads" do
       get path
       assert_response :success
@@ -41,10 +43,24 @@ class PagesTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test "chat history page loads with saved messages" do
-    post "/chat_bot/send_message", params: { message: "Apa itu packer?" }, as: :json
-    get "/chat_bot"
-    assert_response :success
+  test "chat history page loads with saved messages when the chat bot is on" do
+    with_env("CHAT_BOT_ENABLED" => "true") do
+      post "/chat_bot/send_message", params: { message: "Apa itu packer?" }, as: :json
+      assert_response :success
+      get "/chat_bot"
+      assert_response :success
+    end
+  end
+
+  test "chat bot is off by default" do
+    with_env("CHAT_BOT_ENABLED" => nil) do
+      get "/chat_bot"
+      assert_redirected_to root_path
+      post "/chat_bot/send_message", params: { message: "hi" }, as: :json
+      assert_response :not_found
+      get "/"
+      assert_not_includes response.body, %(href="/chat_bot")
+    end
   end
 
   test "bookmarks of one visitor are not visible to another" do
@@ -55,6 +71,7 @@ class PagesTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "Packer"
 
     reset!
+    sign_in users(:admin)
     get "/bookmarks"
     assert_not_includes response.body, "Fungsi dan jenis packer"
     delete bookmark_path(Bookmark.first)

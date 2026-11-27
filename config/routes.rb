@@ -1,5 +1,23 @@
 Rails.application.routes.draw do
-  devise_for :users
+  devise_for :users, controllers: {
+    registrations: "users/registrations",
+    sessions: "users/sessions"
+  }
+
+  # Admin area (role "admin" only)
+  namespace :admin do
+    root "dashboard#index"
+    resources :articles, except: [:show, :destroy]
+    resources :updates, except: [:show]
+    resources :case_studies, except: [:show]
+    resources :users, except: [:show, :destroy] do
+      member do
+        patch :approve
+        patch :unlock
+      end
+    end
+    resources :audit_events, only: [:index]
+  end
   root 'home#index'
   
   # Home
@@ -17,7 +35,6 @@ Rails.application.routes.draw do
       post :increment_view
       post :bookmark
       delete :unbookmark
-      get :sync_firebase
       get :check_bookmark
     end
   end

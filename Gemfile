@@ -4,18 +4,18 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby "~> 3.3.0"
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
-gem "rails", "~> 7.1.3"
+gem "rails", "~> 8.1.0"
 
 # The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
 gem "sprockets-rails"
 
 # Database adapters
 # SQLite for local development and tests; PostgreSQL in production
-gem "sqlite3", "~> 1.4", group: [:development, :test]
+gem "sqlite3", ">= 2.1", group: [:development, :test]
 gem "pg", "~> 1.5", group: :production
 
 # Use the Puma web server [https://github.com/puma/puma]
-gem "puma", "~> 6"
+gem "puma", ">= 7.2"
 
 # Use JavaScript with ESM import maps [https://github.com/rails/importmap-rails]
 gem "importmap-rails"
@@ -51,21 +51,22 @@ gem "bootsnap", require: false
 # gem "image_processing", "~> 1.2"
 
 # Additional gems for Well Intervention Guide
-gem "pg_search" # For full-text search functionality
 gem "kaminari" # For pagination
 gem "tailwindcss-rails" # For modern styling
-gem "devise" # For user authentication
+gem "devise", "~> 5.0" # User sign-in, roles are in app/models/user.rb
 gem "kramdown", "~> 2.4" # Render handbook articles written in Markdown
 gem "kramdown-parser-gfm", "~> 1.1" # GitHub-style Markdown (tables)
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri mingw x64_mingw ]
+
+  # Security checks for the IT audit: bin/brakeman (code) and bin/bundler-audit (libraries)
+  gem "brakeman", require: false
+  gem "bundler-audit", require: false
 end
 
 group :development do
-  gem "solargraph"
-
   gem "erb_lint"
 
   # Add speed badges [https://github.com/MiniProfiler/rack-mini-profiler]
@@ -81,7 +82,5 @@ group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara"
   gem "selenium-webdriver"
-  gem "webdrivers"
 end
 
-gem "dotenv-rails", "~> 3.2"

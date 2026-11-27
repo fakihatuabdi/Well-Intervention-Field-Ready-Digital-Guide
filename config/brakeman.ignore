@@ -1,0 +1,17 @@
+{
+  "ignored_warnings": [
+    {
+      "warning_type": "Mass Assignment",
+      "warning_code": 105,
+      "fingerprint": "c3a93ae6e07cdd59f5cf3e49d54e37e3489f3bc6d5b0c54ed4d2d52a51d185dd",
+      "check_name": "PermitAttributes",
+      "message": "Potentially dangerous key allowed for mass assignment",
+      "file": "app/controllers/admin/users_controller.rb",
+      "line": 66,
+      "code": "params.require(:user).permit(:name, :email, :role, :status, :password, :password_confirmation)",
+      "confidence": "Medium",
+      "note": "Intended: this is the admin-only user management page (Admin::BaseController#require_admin). Setting role/status is its purpose. Self sign-up and 'My account' use Users::RegistrationsController, which does not permit role or status. Covered by test/integration/access_control_test.rb."
+    }
+  ],
+  "brakeman_version": "8.1.1"
+}

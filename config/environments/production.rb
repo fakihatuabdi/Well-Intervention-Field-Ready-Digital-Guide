@@ -22,13 +22,13 @@ Rails.application.configure do
 
   # Disable serving static files from the `/public` folder by default since
   # Apache or NGINX already handles this.
-  config.public_file_server.enabled = ENV["RAILS_SERVE_STATIC_FILES"].present? || ENV['RENDER'].present?
+  config.public_file_server.enabled = ENV["RAILS_SERVE_STATIC_FILES"].present?
 
   # Compress CSS using a preprocessor.
   # config.assets.css_compressor = :sass
 
-  # Do not fallback to assets pipeline if a precompiled asset is missed.
-  config.assets.compile = true
+  # Assets are precompiled into the Docker image; never compile at runtime.
+  config.assets.compile = false
 
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
   # config.asset_host = "http://assets.example.com"
@@ -39,14 +39,29 @@ Rails.application.configure do
 
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :local
+  config.active_storage.variant_processor = :disabled
 
   # Mount Action Cable outside main process or domain.
   # config.action_cable.mount_path = nil
   # config.action_cable.url = "wss://example.com/cable"
   # config.action_cable.allowed_request_origins = [ "http://example.com", /http:\/\/example.*/ ]
 
-  # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
-  # config.force_ssl = true
+  # HTTPS: set FORCE_SSL=true when the app is reached over HTTPS (for example
+  # behind the company reverse proxy or on Northflank). It redirects http to
+  # https, sends Strict-Transport-Security and marks cookies "secure".
+  # Plain http inside a closed network works with the default (off).
+  if AppSettings.force_ssl?
+    config.assume_ssl = true
+    config.force_ssl = true
+    config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
+  end
+
+  # Optional: only answer for these host names (comma separated), e.g.
+  # APP_HOSTS=wi-guide.intranet.local,10.0.0.15
+  if ENV["APP_HOSTS"].present?
+    config.hosts = ENV["APP_HOSTS"].split(",").map(&:strip).reject(&:empty?)
+    config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
+  end
 
   # Include generic and useful information about system operation, but avoid logging too much
   # information to avoid inadvertent exposure of personally identifiable information (PII).

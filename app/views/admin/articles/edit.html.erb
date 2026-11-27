@@ -1,0 +1,17 @@
+<div class="fade-in w-full max-w-5xl mx-auto">
+  <%= render "admin/shared/nav" %>
+  <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+    <h1 class="text-3xl font-bold text-slate-800">Edit article</h1>
+    <% if @article.published? && @article.persisted? %>
+      <%= link_to "View on site", article_path(@article), class: AdminHelper::SECONDARY_BUTTON %>
+    <% end %>
+  </div>
+  <% if @article.seed_digest.present? %>
+    <p class="mb-4 text-sm text-slate-600 bg-sky-50 border border-sky-100 rounded-lg p-3">
+      This article came from the handbook files. Once you save a change here, your version is kept and is never replaced by the files again.
+    </p>
+  <% end %>
+  <div class="bg-white rounded-xl shadow p-6 border border-slate-100">
+    <%= render "form", article: @article %>
+  </div>
+</div>
