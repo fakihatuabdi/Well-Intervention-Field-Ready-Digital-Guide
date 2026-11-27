@@ -1,25 +1,30 @@
-# Be sure to restart your server when you modify this file.
+# Content Security Policy: the browser may only load scripts, styles, images
+# and fonts from this server. Nothing is loaded from the internet (no CDN, no
+# Google Fonts, no analytics), so the app also works without internet access.
+# Inline <script> blocks must carry the per-request nonce.
+Rails.application.configure do
+  config.content_security_policy do |policy|
+    policy.default_src :self
+    policy.base_uri    :self
+    policy.font_src    :self, :data
+    policy.img_src     :self, :data
+    policy.object_src  :none
+    policy.frame_ancestors :self
+    policy.form_action :self
+    policy.script_src  :self
+    # Tailwind utility classes are static files; inline style attributes are
+    # still used by a few views.
+    policy.style_src   :self, :unsafe_inline
+    if Rails.env.development?
+      policy.connect_src :self, "ws://localhost:*", "ws://127.0.0.1:*"
+    else
+      policy.connect_src :self
+    end
+  end
 
-# Define an application-wide content security policy.
-# See the Securing Rails Applications Guide for more information:
-# https://guides.rubyonrails.org/security.html#content-security-policy-header
-
-# Rails.application.configure do
-#   config.content_security_policy do |policy|
-#     policy.default_src :self, :https
-#     policy.font_src    :self, :https, :data
-#     policy.img_src     :self, :https, :data
-#     policy.object_src  :none
-#     policy.script_src  :self, :https
-#     policy.style_src   :self, :https
-#     # Specify URI for violation reports
-#     # policy.report_uri "/csp-violation-report-endpoint"
-#   end
-#
-#   # Generate session nonces for permitted importmap and inline scripts
-#   config.content_security_policy_nonce_generator = ->(request) { request.session.id.to_s }
-#   config.content_security_policy_nonce_directives = %w(script-src)
-#
-#   # Report violations without enforcing the policy.
-#   # config.content_security_policy_report_only = true
-# end
+  # The nonce must stay the same across Turbo page visits (Turbo copies the
+  # nonce of the first page onto scripts of later pages), so one random nonce
+  # is kept per session (sessions are encrypted cookies).
+  config.content_security_policy_nonce_generator = ->(request) { request.session[:csp_nonce] ||= SecureRandom.base64(16) }
+  config.content_security_policy_nonce_directives = %w[script-src]
+end

@@ -1,1 +1,19 @@
-# Users are created inside the tests when needed
+admin:
+  email: admin@example.com
+  name: Admin User
+  role: admin
+  status: active
+  encrypted_password: <%= Devise::Encryptor.digest(User, "Password1234") %>
+
+reader:
+  email: reader@example.com
+  name: Field Reader
+  role: pengguna
+  status: active
+  encrypted_password: <%= Devise::Encryptor.digest(User, "Password1234") %>
+
+pending:
+  email: pending@example.com
+  role: pengguna
+  status: pending
+  encrypted_password: <%= Devise::Encryptor.digest(User, "Password1234") %>

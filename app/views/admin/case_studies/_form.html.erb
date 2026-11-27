@@ -1,0 +1,23 @@
+<%= form_with model: [:admin, case_study], class: "space-y-5" do |f| %>
+  <%= render "admin/shared/errors", record: case_study %>
+  <div>
+    <%= f.label :title, class: admin_label_class %>
+    <%= f.text_field :title, required: true, maxlength: 200, class: admin_input_class %>
+  </div>
+  <div>
+    <%= f.label :description, "Short description", class: admin_label_class %>
+    <%= f.text_area :description, rows: 3, class: admin_input_class %>
+  </div>
+  <div>
+    <%= f.label :content, "Full text", class: admin_label_class %>
+    <%= f.text_area :content, rows: 10, class: admin_input_class %>
+  </div>
+  <label class="flex items-center gap-2 text-sm font-semibold text-slate-700">
+    <%= f.check_box :published, class: "w-4 h-4" %>
+    Published (visible on the home page)
+  </label>
+  <div class="flex gap-3">
+    <%= f.submit "Save case study", class: AdminHelper::PRIMARY_BUTTON %>
+    <%= link_to "Back to list", admin_case_studies_path, class: AdminHelper::SECONDARY_BUTTON %>
+  </div>
+<% end %>

@@ -1,0 +1,29 @@
+<div class="fade-in w-full max-w-xl mx-auto mt-14 lg:mt-0">
+  <h1 class="text-3xl font-bold text-slate-800 mb-2">My account</h1>
+  <p class="text-slate-600 mb-6"><%= resource.email %> · <%= resource.role_label %></p>
+
+  <div class="bg-white rounded-2xl shadow p-6 border border-slate-100">
+    <h2 class="text-lg font-bold text-slate-800 mb-4">Change name or password</h2>
+    <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put, class: "space-y-4" }) do |f| %>
+      <%= render "admin/shared/errors", record: resource %>
+      <div>
+        <%= f.label :name, class: admin_label_class %>
+        <%= f.text_field :name, maxlength: 100, class: admin_input_class %>
+      </div>
+      <div>
+        <%= f.label :password, "New password (leave empty to keep it)", class: admin_label_class %>
+        <%= f.password_field :password, autocomplete: "new-password", class: admin_input_class %>
+        <p class="text-xs text-slate-500 mt-1">At least <%= @minimum_password_length || 10 %> characters, with letters and numbers.</p>
+      </div>
+      <div>
+        <%= f.label :password_confirmation, "Repeat new password", class: admin_label_class %>
+        <%= f.password_field :password_confirmation, autocomplete: "new-password", class: admin_input_class %>
+      </div>
+      <div>
+        <%= f.label :current_password, "Current password (required to save)", class: admin_label_class %>
+        <%= f.password_field :current_password, autocomplete: "current-password", required: true, class: admin_input_class %>
+      </div>
+      <%= f.submit "Save", class: AdminHelper::PRIMARY_BUTTON %>
+    <% end %>
+  </div>
+</div>

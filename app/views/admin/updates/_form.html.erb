@@ -1,0 +1,25 @@
+<%= form_with model: [:admin, update], class: "space-y-5" do |f| %>
+  <%= render "admin/shared/errors", record: update %>
+  <div>
+    <%= f.label :title, class: admin_label_class %>
+    <%= f.text_field :title, required: true, maxlength: 200, class: admin_input_class %>
+  </div>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div>
+      <%= f.label :category, class: admin_label_class %>
+      <%= f.select :category, [["Safety", "safety"], ["Announcement", "announcement"], ["Review", "review"], ["Feature", "feature"]], {}, class: admin_input_class %>
+    </div>
+    <div>
+      <%= f.label :published_at, "Publish date", class: admin_label_class %>
+      <%= f.datetime_local_field :published_at, class: admin_input_class %>
+    </div>
+  </div>
+  <div>
+    <%= f.label :content, "Text", class: admin_label_class %>
+    <%= f.text_area :content, rows: 6, class: admin_input_class %>
+  </div>
+  <div class="flex gap-3">
+    <%= f.submit "Save notice", class: AdminHelper::PRIMARY_BUTTON %>
+    <%= link_to "Back to list", admin_updates_path, class: AdminHelper::SECONDARY_BUTTON %>
+  </div>
+<% end %>

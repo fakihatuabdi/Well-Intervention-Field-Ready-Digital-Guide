@@ -13,40 +13,10 @@
     <%= javascript_importmap_tags %>
     <%= hotwire_livereload_tags if Rails.env.development? %>
     
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- Firebase SDK (Compat version for easier integration) -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-    
-    <script>
-      // Firebase Configuration (from ENV)
-      <% if ENV['FIREBASE_API_KEY'].present? %>
-      const firebaseConfig = {
-        apiKey: "<%= ENV['FIREBASE_API_KEY'] %>",
-        authDomain: "<%= ENV['FIREBASE_AUTH_DOMAIN'] %>",
-        databaseURL: "<%= ENV['FIREBASE_DATABASE_URL'] %>",
-        projectId: "<%= ENV['FIREBASE_PROJECT_ID'] %>",
-        storageBucket: "<%= ENV['FIREBASE_STORAGE_BUCKET'] %>",
-        messagingSenderId: "<%= ENV['FIREBASE_MESSAGING_SENDER_ID'] %>",
-        appId: "<%= ENV['FIREBASE_APP_ID'] %>"
-      };
-
-      // Initialize Firebase
-      if (typeof firebase !== 'undefined' && !firebase.apps.length) {
-        firebase.initializeApp(firebaseConfig);
-        console.log('🔥 Firebase initialized successfully!');
-      }
-      <% else %>
-      console.warn('⚠️ Firebase credentials not configured. Set ENV variables for Firebase integration.');
-      <% end %>
-    </script>
     
     <style>
       * {
-        font-family: 'Inter', sans-serif;
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
       }
       
       @keyframes fadeIn {
@@ -122,7 +92,7 @@
           </div>
         <% end %>
       </div>
-      <script>
+      <script nonce="<%= content_security_policy_nonce %>">
         // Auto-hide flash messages after 5 seconds
         setTimeout(() => {
           const flashMessages = document.getElementById('flash-messages');
@@ -184,11 +154,13 @@
             <span>Calculator</span>
           <% end %>
           
+          <% if chat_bot_enabled? %>
           <%= link_to chat_bot_path, class: "flex items-center gap-3 p-3 rounded-lg hover:bg-sky-700/50 transition-all duration-300 #{current_page?(chat_bot_path) ? 'bg-sky-700/70' : ''}" do %>
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
             </svg>
             <span>AI Chat Bot</span>
+          <% end %>
           <% end %>
           
           <%= link_to bookmarks_path, class: "flex items-center gap-3 p-3 rounded-lg hover:bg-sky-700/50 transition-all duration-300 #{current_page?(bookmarks_path) ? 'bg-sky-700/70' : ''}" do %>
@@ -197,14 +169,30 @@
             </svg>
             <span>Bookmarks</span>
           <% end %>
+          <% if current_user&.admin? %>
+            <%= link_to admin_root_path, class: "flex items-center gap-3 p-3 rounded-lg hover:bg-sky-700/50 transition-all duration-300 #{request.path.start_with?('/admin') ? 'bg-sky-700/70' : ''}" do %>
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+              </svg>
+              <span>Admin</span>
+            <% end %>
+          <% end %>
         </ul>
       </div>
       
-      <div class="absolute bottom-0 left-0 right-0 p-6 border-t border-slate-700">
-        <p class="text-xs text-sky-100 text-center">
-          Upstream Oil & Gas<br>
-          Digital Guide v1.0
-        </p>
+      <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-sky-400/40">
+        <% if current_user %>
+          <p class="text-sm font-semibold truncate" title="<%= current_user.email %>"><%= current_user.display_name %></p>
+          <p class="text-xs text-sky-100 mb-2"><%= current_user.admin? ? "Admin" : "Pengguna" %></p>
+          <div class="flex gap-2 text-xs">
+            <%= link_to "My account", edit_user_registration_path, class: "px-2 py-1 rounded bg-sky-700/50 hover:bg-sky-700/80" %>
+            <%= button_to "Sign out", destroy_user_session_path, method: :delete, form_class: "inline", form: { data: { turbo: false } }, class: "px-2 py-1 rounded bg-sky-700/50 hover:bg-sky-700/80 cursor-pointer" %>
+          </div>
+        <% elsif !current_page?(new_user_session_path) %>
+          <%= link_to "Sign in", new_user_session_path, class: "block text-center text-sm px-3 py-2 rounded bg-sky-700/50 hover:bg-sky-700/80" %>
+        <% end %>
+        <p class="text-xs text-sky-100 text-center mt-3">Upstream Oil & Gas · Digital Guide v1.1</p>
       </div>
     </nav>
 
@@ -215,7 +203,7 @@
       </div>
     </main>
 
-    <script>
+    <script nonce="<%= content_security_policy_nonce %>">
       // Mobile menu with Turbo support - prevent redeclaration
       (function() {
         const stateKey = 'mobile_menu_state';

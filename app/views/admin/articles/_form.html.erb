@@ -1,0 +1,46 @@
+<%= form_with model: [:admin, article], class: "space-y-5" do |f| %>
+  <%= render "admin/shared/errors", record: article %>
+
+  <div>
+    <%= f.label :title, class: admin_label_class %>
+    <%= f.text_field :title, required: true, maxlength: 200, class: admin_input_class %>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div>
+      <%= f.label :category, "Section", class: admin_label_class %>
+      <%= f.select :category, Article::CATEGORY_LABELS.invert.to_a, {}, class: admin_input_class %>
+      <p class="text-xs text-slate-500 mt-1">Zona Rokan articles appear under Rig Hub.</p>
+    </div>
+    <div>
+      <%= f.label :position, "Order in list", class: admin_label_class %>
+      <%= f.number_field :position, min: 0, class: admin_input_class %>
+    </div>
+    <div class="flex items-end">
+      <label class="flex items-center gap-2 text-sm font-semibold text-slate-700">
+        <%= f.check_box :published, class: "w-4 h-4" %>
+        Published (visible to users)
+      </label>
+    </div>
+  </div>
+
+  <div>
+    <%= f.label :summary, "Short summary (shown on cards and search results)", class: admin_label_class %>
+    <%= f.text_field :summary, maxlength: 255, class: admin_input_class %>
+  </div>
+
+  <div>
+    <%= f.label :content, class: admin_label_class %>
+    <%= f.text_area :content, rows: 24, class: admin_input_class + " font-mono text-sm" %>
+    <p class="text-xs text-slate-500 mt-1">
+      Written in Markdown: <code>## Heading</code>, <code>**bold**</code>, <code>- list item</code>,
+      tables with <code>| a | b |</code>, images with <code>![caption](/handbook-images/file.png)</code>.
+      Unsafe HTML (scripts, forms, iframes) is removed automatically.
+    </p>
+  </div>
+
+  <div class="flex gap-3">
+    <%= f.submit "Save article", class: AdminHelper::PRIMARY_BUTTON %>
+    <%= link_to "Back to list", admin_articles_path, class: AdminHelper::SECONDARY_BUTTON %>
+  </div>
+<% end %>

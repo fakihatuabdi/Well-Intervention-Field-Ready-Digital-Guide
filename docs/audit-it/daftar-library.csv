@@ -1,0 +1,123 @@
+nama,versi,lisensi,dipakai_di_produksi
+action_text-trix,2.1.19,MIT,ya
+actioncable,8.1.4.1,MIT,ya
+actionmailbox,8.1.4.1,MIT,ya
+actionmailer,8.1.4.1,MIT,ya
+actionpack,8.1.4.1,MIT,ya
+actiontext,8.1.4.1,MIT,ya
+actionview,8.1.4.1,MIT,ya
+activejob,8.1.4.1,MIT,ya
+activemodel,8.1.4.1,MIT,ya
+activerecord,8.1.4.1,MIT,ya
+activestorage,8.1.4.1,MIT,ya
+activesupport,8.1.4.1,MIT,ya
+addressable,2.10.0,Apache-2.0,tidak (hanya tes/pengembangan)
+ast,2.4.3,MIT,tidak (hanya tes/pengembangan)
+base64,0.3.0,Ruby / BSD-2-Clause,ya
+bcrypt,3.1.22,MIT,ya
+better_html,2.2.0,MIT,tidak (hanya tes/pengembangan)
+bigdecimal,4.1.3,Ruby / BSD-2-Clause,ya
+bootsnap,1.26.2,MIT,ya
+brakeman,8.1.1,Brakeman Public Use License,tidak (hanya tes/pengembangan)
+builder,3.3.0,MIT,ya
+bundler,2.5.3,MIT,ya
+bundler-audit,0.9.3,GPL-3.0-or-later,tidak (hanya tes/pengembangan)
+capybara,3.40.0,MIT,tidak (hanya tes/pengembangan)
+concurrent-ruby,1.3.8,MIT,ya
+connection_pool,3.0.3,MIT,ya
+crass,1.0.8,MIT,ya
+date,3.6.0,Ruby / BSD-2-Clause,ya
+debug,1.11.1,Ruby / BSD-2-Clause,tidak (hanya tes/pengembangan)
+devise,5.0.4,MIT,ya
+drb,2.2.3,Ruby / BSD-2-Clause,ya
+erb,6.0.7,Ruby / BSD-2-Clause,ya
+erb_lint,0.9.0,MIT,tidak (hanya tes/pengembangan)
+erubi,1.13.1,MIT,ya
+ffi,1.17.4,BSD-3-Clause,tidak (hanya tes/pengembangan)
+globalid,1.4.0,MIT,ya
+hotwire-livereload,1.4.1,MIT,tidak (hanya tes/pengembangan)
+i18n,1.15.2,MIT,ya
+importmap-rails,2.2.3,MIT,ya
+io-console,0.9.5,Ruby / BSD-2-Clause,ya
+irb,1.19.0,Ruby / BSD-2-Clause,ya
+jbuilder,2.15.1,MIT,ya
+json,3.2.0,Ruby,ya
+kaminari,1.3.3,MIT,ya
+kaminari-actionview,1.3.3,MIT,ya
+kaminari-activerecord,1.3.3,MIT,ya
+kaminari-core,1.3.3,MIT,ya
+kramdown,2.6.1,MIT,ya
+kramdown-parser-gfm,1.1.0,MIT,ya
+language_server-protocol,3.17.0.6,MIT,tidak (hanya tes/pengembangan)
+lint_roller,1.1.0,MIT,tidak (hanya tes/pengembangan)
+listen,3.10.1,MIT,tidak (hanya tes/pengembangan)
+logger,1.7.0,Ruby / BSD-2-Clause,ya
+loofah,2.25.3,MIT,ya
+mail,2.9.1,MIT,ya
+marcel,1.2.1,MIT / Apache-2.0,ya
+matrix,0.4.3,Ruby / BSD-2-Clause,tidak (hanya tes/pengembangan)
+mini_mime,1.1.5,MIT,ya
+minitest,6.1.0,MIT,ya
+msgpack,1.8.7,Apache-2.0,ya
+net-imap,0.6.8,Ruby / BSD-2-Clause,ya
+net-pop,0.1.2,Ruby / BSD-2-Clause,ya
+net-protocol,0.4.0,Ruby / BSD-2-Clause,ya
+net-smtp,0.5.2,Ruby / BSD-2-Clause,ya
+nio4r,2.7.5,MIT / BSD-2-Clause,ya
+nokogiri,1.19.7,MIT,ya
+orm_adapter,0.5.0,MIT,ya
+parallel,2.3.0,MIT,tidak (hanya tes/pengembangan)
+parser,3.3.14.0,MIT,tidak (hanya tes/pengembangan)
+pg,1.7.0,BSD-2-Clause,ya
+pp,0.6.4,Ruby / BSD-2-Clause,ya
+prettyprint,0.2.1,Ruby / BSD-2-Clause,ya
+prism,2.1.0,MIT,ya
+public_suffix,7.0.5,MIT,tidak (hanya tes/pengembangan)
+puma,8.1.3,BSD-3-Clause,ya
+racc,1.8.1,Ruby / BSD-2-Clause,ya
+rack,3.2.9,MIT,ya
+rack-session,2.1.2,MIT,ya
+rack-test,2.3.0,MIT,ya
+rackup,2.3.1,MIT,ya
+rails,8.1.4.1,MIT,ya
+rails-dom-testing,2.3.0,MIT,ya
+rails-html-sanitizer,1.7.2,MIT,ya
+railties,8.1.4.1,MIT,ya
+rainbow,3.1.1,MIT,tidak (hanya tes/pengembangan)
+rake,13.4.2,MIT,ya
+rb-fsevent,0.11.2,MIT,tidak (hanya tes/pengembangan)
+rb-inotify,0.11.1,MIT,tidak (hanya tes/pengembangan)
+rbs,4.2.0,BSD-2-Clause / Ruby,ya
+rdoc,8.1.0,Ruby / GPL-2.0-only,ya
+regexp_parser,2.13.4,MIT,tidak (hanya tes/pengembangan)
+reline,0.7.0,Ruby,ya
+responders,3.2.1,MIT,ya
+rexml,3.4.4,BSD-2-Clause,ya
+rubocop,1.93.0,MIT,tidak (hanya tes/pengembangan)
+rubocop-ast,1.54.0,MIT,tidak (hanya tes/pengembangan)
+ruby-progressbar,1.13.0,MIT,tidak (hanya tes/pengembangan)
+rubyzip,3.7.0,BSD-2-Clause,tidak (hanya tes/pengembangan)
+securerandom,0.4.1,Ruby / BSD-2-Clause,ya
+selenium-webdriver,4.54.0,Apache-2.0,tidak (hanya tes/pengembangan)
+smart_properties,1.17.0,lihat situs gem,tidak (hanya tes/pengembangan)
+sprockets,4.4.1,MIT,ya
+sprockets-rails,3.5.2,MIT,ya
+sqlite3,2.10.2,BSD-3-Clause,tidak (hanya tes/pengembangan)
+stimulus-rails,1.3.4,MIT,ya
+tailwindcss-rails,4.7.0,MIT,ya
+tailwindcss-ruby,4.3.4,MIT,ya
+thor,1.5.0,MIT,ya
+timeout,0.6.1,Ruby / BSD-2-Clause,ya
+tsort,0.2.0,Ruby / BSD-2-Clause,ya
+turbo-rails,2.0.23,MIT,ya
+tzinfo,2.0.6,MIT,ya
+unicode-display_width,3.3.0,MIT,tidak (hanya tes/pengembangan)
+unicode-emoji,4.3.0,MIT,tidak (hanya tes/pengembangan)
+uri,1.1.2,Ruby / BSD-2-Clause,ya
+useragent,0.16.11,MIT,ya
+warden,1.2.9,MIT,ya
+websocket,1.2.11,MIT,tidak (hanya tes/pengembangan)
+websocket-driver,0.9.1,Apache-2.0,ya
+websocket-extensions,0.3.0,Apache-2.0,ya
+xpath,3.2.0,MIT,tidak (hanya tes/pengembangan)
+zeitwerk,2.8.3,MIT,ya

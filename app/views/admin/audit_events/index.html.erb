@@ -1,0 +1,14 @@
+<div class="fade-in w-full max-w-6xl mx-auto">
+  <%= render "admin/shared/nav" %>
+  <h1 class="text-3xl font-bold text-slate-800 mb-2">Audit log</h1>
+  <p class="text-slate-600 mb-4">Sign-ins, failed sign-ins and every change made in the admin area. Entries cannot be edited or deleted from the app.</p>
+  <div class="flex flex-wrap gap-2 mb-4 text-sm">
+    <% [["All", nil], ["Sign-in", "user.sign_in"], ["Users", "user."], ["Articles", "article."], ["Notices", "update."], ["Case studies", "case_study."]].each do |label, prefix| %>
+      <%= link_to label, admin_audit_events_path(action_prefix: prefix), class: "px-3 py-1 rounded-full #{params[:action_prefix].to_s == prefix.to_s ? 'bg-sky-600 text-white' : 'bg-white border border-slate-200 text-slate-700'}" %>
+    <% end %>
+  </div>
+  <div class="bg-white rounded-xl shadow p-6 border border-slate-100">
+    <%= render "admin/audit_events/table", events: @events %>
+    <div class="mt-4"><%= paginate @events %></div>
+  </div>
+</div>

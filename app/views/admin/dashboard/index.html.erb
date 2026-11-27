@@ -1,0 +1,21 @@
+<div class="fade-in w-full max-w-5xl mx-auto">
+  <%= render "admin/shared/nav" %>
+  <h1 class="text-3xl font-bold text-slate-800 mb-6">Admin dashboard</h1>
+
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+    <% [["Articles", @counts[:articles], admin_articles_path], ["Published", @counts[:published], admin_articles_path], ["Users", @counts[:users], admin_users_path], ["Waiting approval", @counts[:pending], admin_users_path(status: "pending")]].each do |label, value, path| %>
+      <%= link_to path, class: "bg-white rounded-xl shadow p-5 border border-slate-100 hover:border-sky-300" do %>
+        <p class="text-sm text-slate-500"><%= label %></p>
+        <p class="text-3xl font-bold text-slate-800"><%= value %></p>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="bg-white rounded-xl shadow p-6 border border-slate-100">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-xl font-bold text-slate-800">Latest activity</h2>
+      <%= link_to "Full audit log", admin_audit_events_path, class: "text-sm text-sky-700 hover:underline" %>
+    </div>
+    <%= render "admin/audit_events/table", events: @recent_events %>
+  </div>
+</div>

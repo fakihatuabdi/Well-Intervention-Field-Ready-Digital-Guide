@@ -1,0 +1,57 @@
+# Run the whole app on one computer or server, with no external services:
+#
+#   1. copy .env.example to .env and fill in ADMIN_EMAIL / ADMIN_PASSWORD
+#   2. docker compose up -d --build
+#   3. open http://localhost:3000  (or http://<server-ip>:3000)
+#
+# Data (database + generated secret) lives in Docker volumes and survives
+# restarts and upgrades. See docs/audit-it/02-INSTALASI.md.
+name: wi-guide
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: wi_guide
+      POSTGRES_USER: wi_guide
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-wi_guide_local}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U wi_guide -d wi_guide"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    # The database is NOT published to the network; only the app can reach it.
+
+  app:
+    build: .
+    image: wi-guide:latest
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      # Change the left number to use another port, e.g. "8080:3000".
+      # Use "127.0.0.1:3000:3000" to allow access from this computer only.
+      - "${APP_PORT:-3000}:3000"
+    environment:
+      DATABASE_URL: postgres://wi_guide:${POSTGRES_PASSWORD:-wi_guide_local}@db:5432/wi_guide
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE:-}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:?Set ADMIN_EMAIL in the .env file (see .env.example)}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?Set ADMIN_PASSWORD in the .env file (see .env.example)}
+      REQUIRE_LOGIN: ${REQUIRE_LOGIN:-true}
+      ALLOW_SIGNUP: ${ALLOW_SIGNUP:-false}
+      SIGNUP_EMAIL_DOMAIN: ${SIGNUP_EMAIL_DOMAIN:-}
+      CHAT_BOT_ENABLED: ${CHAT_BOT_ENABLED:-false}
+      SESSION_TIMEOUT_MINUTES: ${SESSION_TIMEOUT_MINUTES:-480}
+      FORCE_SSL: ${FORCE_SSL:-false}
+      APP_HOSTS: ${APP_HOSTS:-}
+      SEED_DEMO_CONTENT: ${SEED_DEMO_CONTENT:-false}
+    volumes:
+      - app-storage:/rails/storage
+
+volumes:
+  db-data:
+  app-storage:

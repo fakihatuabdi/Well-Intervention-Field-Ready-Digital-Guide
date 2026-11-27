@@ -1,0 +1,33 @@
+<% if events.any? %>
+  <div class="overflow-x-auto">
+    <table class="min-w-full text-sm">
+      <thead>
+        <tr class="text-left text-slate-500 border-b">
+          <th class="py-2 pr-4">Time</th>
+          <th class="py-2 pr-4">Who</th>
+          <th class="py-2 pr-4">Action</th>
+          <th class="py-2 pr-4">Item</th>
+          <th class="py-2 pr-4">IP</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% events.each do |event| %>
+          <tr class="border-b border-slate-100 align-top">
+            <td class="py-2 pr-4 whitespace-nowrap text-slate-600"><%= l(event.created_at, format: :short) %></td>
+            <td class="py-2 pr-4"><%= event.actor_email.presence || "-" %></td>
+            <td class="py-2 pr-4 font-mono text-xs"><%= event.action %></td>
+            <td class="py-2 pr-4">
+              <%= event.target_label %>
+              <% if event.details.present? %>
+                <div class="text-xs text-slate-500 break-all"><%= event.details.to_s.first(300) %></div>
+              <% end %>
+            </td>
+            <td class="py-2 pr-4 text-slate-500"><%= event.ip_address %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <p class="text-slate-500">Nothing recorded yet.</p>
+<% end %>
